@@ -8,14 +8,14 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/security/PullPayment.sol";
 
 
-contract Complexion is Ownable, ERC721, PullPayment, ERC721Enumerable {
-
+contract Complexion is Ownable, ERC721Enumerable, PullPayment {
+    
     string public baseURI;
-    uint256 public roundNumber;
+    uint256 public roundNumber; 
     uint256 public mintPrice = 0.1 ether;
     address public currentRoundPool;
     address public sidePotPool;
-    uint256 public oldSupply;
+    uint256 public oldSupply;   
 
     // stores a `Voter` struct for each possible address.
     mapping(address => Voter) public voters;
@@ -32,7 +32,7 @@ contract Complexion is Ownable, ERC721, PullPayment, ERC721Enumerable {
         bool voted;  // if true, that person already voted
     }
 
-    function vote(uint256 _vote) public payable {
+    function vote() public payable {
         Voter storage sender = voters[msg.sender];
         require(sender.voted != true, "Already voted this round"); // check player hasn't voted this round
         sender.voted = true;
@@ -44,25 +44,22 @@ contract Complexion is Ownable, ERC721, PullPayment, ERC721Enumerable {
         oldSupply++;
 
         // Calcualte distribution and send ETH to currentPool and sidePoool using PullPayment
-        _asyncTransfer(currentRoundPool, msg.value * 0.9); //fix
-        _asyncTransfer(sidePotPool, msg.value * 0.09); //fix
+        _asyncTransfer(currentRoundPool, msg.value * 90 / 100); 
+        _asyncTransfer(sidePotPool, msg.value * 90 / 100); 
 
         if(oldSupply == 10) {
             // won this round
             winnerRound[roundNumber] == true;
         }
 
-        emit Voted(msg.sender, printPrice, roundNumber, "red"); // color
-
+        emit Voted(msg.sender, printPrice, roundNumber, "red"); 
     }
 
-    function getPrintPrice(uint256 _supply) public returns(uint256) {
-        if(_supply < 4) {
-            return mintPrice;
-        } else if(_supply < 7) {
-            return mintPrice + 0.1; //fix
-        } 
-        //....
+    function getPrintPrice(uint256 _supply) public view returns (uint256) {
+        return (_supply < 4) ? mintPrice
+            : (_supply < 7) ? mintPrice + 0.1 ether
+            : (_supply < 9) ? mintPrice + 0.2 ether
+            : mintPrice + 0.3 ether;
     }
 
     function mintWinner() public {
@@ -72,8 +69,5 @@ contract Complexion is Ownable, ERC721, PullPayment, ERC721Enumerable {
         // check owner has not minted for this round 
         _safeMint(msg.sender, tokenId);
     }
-
-
-    
-
 }
+

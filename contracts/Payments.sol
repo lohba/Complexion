@@ -9,8 +9,3 @@ contract Payment is PaymentSplitter {
     
 }
 
-
-// Predeploy NFT Contract separately (Red,Blue,Green,Yellow) => only difference is the URI
-// Make calls from deployed contract 
-
-// sidePool => claim() 

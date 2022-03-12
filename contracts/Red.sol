@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/security/PullPayment.sol";
-
+import "hardhat/console.sol";
 
 contract Complexion is Ownable, ERC721Enumerable, PullPayment {
     
@@ -26,36 +26,40 @@ contract Complexion is Ownable, ERC721Enumerable, PullPayment {
     constructor(string memory _initialBaseURI) ERC721("Complexion", "COMPLEX") {
         baseURI = _initialBaseURI;
     }
-
+    
     struct Voter {
         uint256 round; // round of vote
         bool voted;  // if true, that person already voted
     }
 
     function vote() public payable {
+        console.log(mintPrice);
         Voter storage sender = voters[msg.sender];
+        
         require(sender.voted != true, "Already voted this round"); // check player hasn't voted this round
         sender.voted = true;
         sender.round = roundNumber;
-
-        uint256 printPrice = getPrintPrice(oldSupply + 1);
-        require(msg.value == printPrice, "Insufficient funds");
+        
+        
+        mintPrice = getMintPrice(oldSupply + 1);
+        require(msg.value == mintPrice, "Insufficient funds");
         // update new supply
         oldSupply++;
 
         // Calcualte distribution and send ETH to currentPool and sidePoool using PullPayment
-        _asyncTransfer(currentRoundPool, msg.value * 90 / 100); 
-        _asyncTransfer(sidePotPool, msg.value * 90 / 100); 
+        //_asyncTransfer(currentRoundPool, msg.value * 90 / 100); 
+        //_asyncTransfer(sidePotPool, msg.value * 90 / 100); 
+        _asyncTransfer(sidePotPool, msg.value);
 
         if(oldSupply == 10) {
             // won this round
             winnerRound[roundNumber] == true;
         }
-
-        emit Voted(msg.sender, printPrice, roundNumber, "red"); 
+        console.log("complete");
+        emit Voted(msg.sender, mintPrice, roundNumber, "red"); 
     }
 
-    function getPrintPrice(uint256 _supply) public view returns (uint256) {
+    function getMintPrice(uint256 _supply) public view returns (uint256) {
         return (_supply < 4) ? mintPrice
             : (_supply < 7) ? mintPrice + 0.1 ether
             : (_supply < 9) ? mintPrice + 0.2 ether

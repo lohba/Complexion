@@ -8,3 +8,4 @@ interface IRed {
 contract GameLogic {
 
 }
+

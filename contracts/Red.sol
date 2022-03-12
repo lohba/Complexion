@@ -47,9 +47,9 @@ contract Complexion is Ownable, ERC721Enumerable, PullPayment {
         oldSupply++;
 
         // Calcualte distribution and send ETH to currentPool and sidePoool using PullPayment
-        //_asyncTransfer(currentRoundPool, msg.value * 90 / 100); 
-        //_asyncTransfer(sidePotPool, msg.value * 90 / 100); 
-        _asyncTransfer(sidePotPool, msg.value);
+        _asyncTransfer(currentRoundPool, msg.value * 90 / 100); 
+        _asyncTransfer(sidePotPool, msg.value * 90 / 100); 
+        
 
         if(oldSupply == 10) {
             // won this round

@@ -13,11 +13,10 @@ interface INFT {
 
 contract GameLogic is PullPayment{
     uint256 public roundNumber = 1;  
-    address public currentRoundPool;
-    address public sidePotPool;
-    uint256 public oldSupply; 
     string public winningColor;
     uint256 public winningRound;
+    address public currentRoundPool;
+    address public sidePotPool;
 
     address RedContract = 0xD7ACd2a9FD159E69Bb102A1ca21C9a3e3A5F771B;
         
@@ -65,7 +64,7 @@ contract GameLogic is PullPayment{
        
     function voteForColor(string memory _color) public payable {
         NFT storage currentNFT = colorToNFT[_color];
-        require(roundToVoter[msg.sender][roundNumber].voted == false, "Already voted this round");// check player hasn't voted this round);
+        require(roundToVoter[msg.sender][roundNumber].voted == false, "Already voted this round"); // check player hasn't voted this round);
         // update NFT supply
         currentNFT.oldSupply += 1;
         // assign color 
@@ -110,17 +109,24 @@ contract GameLogic is PullPayment{
         require(roundToVoter[msg.sender][winningRound].minted == false, "Already minted this round");
         console.log("minted!");
         // run reset function 1 hour after mintwinner() is called
-
+        
         // have to know the amount sent 
         // have to calculate the pool prize
-       
-
+    
         //INFT(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47).mintWinner();
     }   
 
     function reset() private {
         roundNumber += 1;
         // reset structs for all colors
+        red.oldSupply = 0;
+        red.mintPrice = 0.1 ether;
+        blue.oldSupply = 0;
+        blue.mintPrice = 0.1 ether;
+        yellow.oldSupply = 0;
+        yellow.mintPrice = 0.1 ether;
+        green.oldSupply = 0;
+        green.mintPrice = 0.1 ether;
 
     }
 }

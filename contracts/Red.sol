@@ -8,8 +8,8 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/security/PullPayment.sol";
 import "hardhat/console.sol";
 
-contract Complexion is Ownable, ERC721Enumerable, PullPayment {
-    
+contract RedComplexion is Ownable, ERC721Enumerable, PullPayment {
+
     string public _baseTokenURI;
 
     constructor() ERC721("Complexion", "COMPLEX") {

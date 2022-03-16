@@ -11,7 +11,7 @@ interface INFT {
     function mintWinner() external;
 }
 
-contract GameLogic is PullPayment{
+contract GameLogic is PullPayment, ReentrancyGuard{
     uint256 public roundNumber = 1;  
     string public winningColor;
     uint256 public winningRound;
@@ -60,6 +60,7 @@ contract GameLogic is PullPayment{
         string color;
         uint256 mintPrice;
         bool minted;
+        bool claimedReward;
     }
        
     function voteForColor(string memory _color) public payable {
@@ -104,12 +105,30 @@ contract GameLogic is PullPayment{
         emit Voted(msg.sender, currentNFT.mintPrice, roundNumber, _color); 
     }
 
-    function mintWinner() public view {
+    // Winners from the round can claim round reward or mint NFT 
+
+    function claimReward() external payable nonReentrant {
+        require(roundToVoter[msg.sender][winningRound].voted == true, "have to vote");
         require(keccak256(abi.encodePacked(roundToVoter[msg.sender][winningRound].color)) == keccak256(abi.encodePacked(winningColor)), "Not the winning color");
+        require(roundToVoter[msg.sender][winningRound].claimedReward == false, "Already claimed reward for this round");
+        uint256 refund = roundToVoter[msg.sender][winningRound].mintPrice;
+        uint256 individualPrize = currentRoundPool.balance * 10 / 100;
+        console.log(refund);
+        console.log(currentRoundPool);
+        console.log(individualPrize);
+        withdrawPayments(payable(msg.sender));
+        //send fund to msg.sender
+        payable(msg.sender).transfer(refund + individualPrize);
+        roundToVoter[msg.sender][winningRound].claimedReward = true;
+    }
+
+    function mintWinner() external payable nonReentrant {
+        require(keccak256(abi.encodePacked(roundToVoter[msg.sender][winningRound].color)) == keccak256(abi.encodePacked(winningColor)), "Not the winning color");
+        require(roundToVoter[msg.sender][winningRound].claimedReward == false);
         require(roundToVoter[msg.sender][winningRound].minted == false, "Already minted this round");
         console.log("minted!");
         // run reset function 1 hour after mintwinner() is called
-        
+
         // have to know the amount sent 
         // have to calculate the pool prize
     

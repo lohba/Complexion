@@ -7,23 +7,25 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/security/PullPayment.sol";
 import "hardhat/console.sol";
 
-interface IRed {
-    //function vote() external payable;
-    //function getMintPrice(uint256 _supply) external view returns (uint256);
-    // only mint function;
+interface INFT {
+    function mintWinner() external;
 }
 
 contract GameLogic is PullPayment{
-    uint256 public roundNumber;  
+    uint256 public roundNumber = 1;  
     address public currentRoundPool;
     address public sidePotPool;
     uint256 public oldSupply; 
-    string RedContract = "0xD7ACd2a9FD159E69Bb102A1ca21C9a3e3A5F771B";
+    string public winningColor;
+    uint256 public winningRound;
+
+    address RedContract = 0xD7ACd2a9FD159E69Bb102A1ca21C9a3e3A5F771B;
         
     mapping(string => NFT) public colorToNFT;
     mapping(uint256 => bool) public winnerRound;
-    mapping(address => NFT) public voted;
+    //mapping(string => bool) public winnerColor;
 
+    mapping(address => mapping(uint => Voter)) public roundToVoter; // address => round => Voter struct
 
     event Voted(address voter, uint256 price, uint256 roundNumber, string color);
 
@@ -48,46 +50,81 @@ contract GameLogic is PullPayment{
     NFT public yellow;
 
     struct NFT {
-        uint256 roundNumber; 
         uint256 oldSupply;
+        string color;
         uint256 mintPrice;
         address nftAddress;
-        bool wonRound;
-        bool voted;
     }
 
-
+    struct Voter {
+        bool voted;
+        string color;
+        uint256 mintPrice;
+        bool minted;
+    }
+       
     function voteForColor(string memory _color) public payable {
         NFT storage currentNFT = colorToNFT[_color];
-        require(voted[msg.sender].voted == false, "Already voted this round"); // check player hasn't voted this round);
-        // update supply
-        currentNFT.oldSupply+= 1;        
+        require(roundToVoter[msg.sender][roundNumber].voted == false, "Already voted this round");// check player hasn't voted this round);
+        // update NFT supply
+        currentNFT.oldSupply += 1;
+        // assign color 
+        currentNFT.color = _color;
+        // asign color to voter
+        roundToVoter[msg.sender][roundNumber].color = _color;
+        
         // get price     
         uint256 price = (currentNFT.oldSupply <= 4) ? currentNFT.mintPrice
             : (currentNFT.oldSupply <= 7) ? currentNFT.mintPrice + 0.1 ether
             : (currentNFT.oldSupply  <= 9) ? currentNFT.mintPrice + 0.2 ether
-            : currentNFT.mintPrice + 0.3 ether; 
+            : currentNFT.mintPrice + 0.3 ether;
 
-        console.log(price);
-        console.log(currentNFT.oldSupply);
+        // check value being sent for vote
+        require(msg.value == price, "Insufficient amount");
+        // assign price to mintPrice in struct
+        currentNFT.mintPrice == price;
+        roundToVoter[msg.sender][roundNumber].mintPrice = price;
+
+        console.log("Price is ", price);
+        console.log("Supply is ", currentNFT.oldSupply);
+        console.log("Supply round number is ", roundNumber);
 
         // Calcualte distribution and send ETH to currentPool and sidePoool using PullPayment
         _asyncTransfer(currentRoundPool, msg.value * 90 / 100); 
         _asyncTransfer(sidePotPool, msg.value * 9 / 100); 
 
-        // update voted to true
-        voted[msg.sender].voted = true;
-
+        // if the 10th NFT is minted there is a winning color 
         if(currentNFT.oldSupply == 10) {
-            winnerRound[currentNFT.roundNumber] == true;
+            winningRound = roundNumber;
+            winningColor = currentNFT.color;
         }
-        emit Voted(msg.sender, currentNFT.mintPrice, currentNFT.roundNumber, _color); 
+
+        // update voted to true
+        roundToVoter[msg.sender][roundNumber].voted = true;
+        
+        emit Voted(msg.sender, currentNFT.mintPrice, roundNumber, _color); 
     }
 
-    // function mintWinner() public {
-    //     require()
-    // }
+    function mintWinner() public view {
+        require(keccak256(abi.encodePacked(roundToVoter[msg.sender][winningRound].color)) == keccak256(abi.encodePacked(winningColor)), "Not the winning color");
+        require(roundToVoter[msg.sender][winningRound].minted == false, "Already minted this round");
+        console.log("minted!");
+        // run reset function 1 hour after mintwinner() is called
+
+        // have to know the amount sent 
+        // have to calculate the pool prize
+       
+
+        //INFT(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47).mintWinner();
+    }   
+
+    function reset() private {
+        roundNumber += 1;
+        // reset structs for all colors
+
+    }
 }
+
 
 
 

@@ -67,10 +67,7 @@ contract Complexion is Ownable, ERC721Enumerable, PullPayment {
     }
 
     function mintWinner() public {
-        require(winnerRound[voters[msg.sender].round] == true); // check if round is a winner
-        // Mint NFT
         uint tokenId = totalSupply();
-        // check owner has not minted for this round 
         _safeMint(msg.sender, tokenId);
     }
 }

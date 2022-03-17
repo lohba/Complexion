@@ -15,13 +15,15 @@ contract GameLogic is PullPayment, ReentrancyGuard{
     uint256 public roundNumber = 1;
     string public winningColor;
     uint256 public winningRound;
-    address public currentRoundPool;
+    uint256 public currentRoundPool;
     address public sidePotPool;
     uint256 public resetTime;
+    uint256 public votersInRound;
+    
 
-    IRed redContract;
+    //IRed redContract;
 
-    address RedContract = 0xD7ACd2a9FD159E69Bb102A1ca21C9a3e3A5F771B;
+   //address RedContract = 0xD7ACd2a9FD159E69Bb102A1ca21C9a3e3A5F771B;
 
     mapping(string => NFT) public colorToNFT;
     mapping(uint256 => bool) public winnerRound;
@@ -53,10 +55,10 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         colorToNFT["green"] = green;
 
         // references to other contracts
-        redContract = IRed(_red);
-        blue = IBlue(_blue);
-        yellow = IYellow(_yellow);
-        green = IGreen(_green);
+        // redContract = IRed(_red);
+        // blue = IBlue(_blue);
+        // yellow = IYellow(_yellow);
+        // green = IGreen(_green);
     }
 
     NFT public red;
@@ -124,37 +126,45 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         console.log("Supply round number is ", roundNumber);
 
         // Calcualte distribution and send ETH to currentPool and sidePoool using PullPayment
-        _asyncTransfer(currentRoundPool, msg.value * 90 / 100);
-        _asyncTransfer(sidePotPool, msg.value * 9 / 100);
-
+        
+        uint256 valueSentWhenVoting = msg.value * 90 / 100;
+         _asyncTransfer(msg.sender, valueSentWhenVoting);
+        // _asyncTransfer(sidePotPool, msg.value * 9 / 100);
+        currentRoundPool += msg.value;
         // if the 10th NFT is minted there is a winning color
-        if(currentNFT.oldSupply == 10) {
+        if(currentNFT.oldSupply == 3) {
             winningRound = roundNumber;
             winningColor = currentNFT.color;
         }
 
         // update voted to true
         roundToVoter[msg.sender][roundNumber].voted = true;
+        // count total voters for this round
+        votersInRound += 1;
+        // reset timer
         resetTime = block.timestamp + 86400;
 
         emit Voted(msg.sender, currentNFT.mintPrice, roundNumber, _color);
     }
 
+    function redeemAll() public {
+        withdrawPayments(payable (msg.sender));
+    }
+
     // Winners from the round can claim round reward or mint NFT
-
-
     function claimReward() external payable nonReentrant {
         require(roundToVoter[msg.sender][winningRound].voted == true, "have to vote");
         require(keccak256(abi.encodePacked(roundToVoter[msg.sender][winningRound].color)) == keccak256(abi.encodePacked(winningColor)), "Not the winning color");
         require(roundToVoter[msg.sender][winningRound].claimedReward == false, "Already claimed reward for this round");
-        uint256 refund = roundToVoter[msg.sender][winningRound].mintPrice;
-        uint256 individualPrize = currentRoundPool.balance * 10 / 100;
-        console.log(refund);
-        console.log(currentRoundPool);
-        console.log(individualPrize);
-        withdrawPayments(payable(msg.sender));
-        //send fund to msg.sender
-        payable(msg.sender).transfer(refund + individualPrize);
+        require(roundToVoter[msg.sender][winningRound].minted == false, "Already minted this round");
+        // calculation for prize pool per voter based on voters in round
+        console.log("currentRoundPool ", currentRoundPool);
+        console.log("votersInRound ", votersInRound);
+        console.log("amount ", (currentRoundPool - ((currentRoundPool / votersInRound) * 10))/10);
+        _asyncTransfer(msg.sender, (currentRoundPool - ((currentRoundPool / votersInRound) * 10))/10);
+
+        redeemAll();
+        console.log("balance after redeemAll", msg.sender.balance);
         roundToVoter[msg.sender][winningRound].claimedReward = true;
     }
 
@@ -169,14 +179,16 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         // have to calculate the pool prize
 
         //INFT(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47).mintWinner();
+        roundToVoter[msg.sender][winningRound].minted = true;
     }
 
 function reset() external {
         require(block.timestamp > resetTime, "Not yet ready");
-        WinnerRound[roundNumber] = (
 
-        )
-        roundNumber += 1;
+        // WinnerRound[roundNumber] = (
+
+        // )
+        //roundNumber += 1;
         // reset structs for all colors
         red.oldSupply = 0;
         red.mintPrice = 0.1 ether;

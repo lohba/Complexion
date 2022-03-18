@@ -46,37 +46,34 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         address _yellow,
         address _green
     ) {
-
-        // maybe outside constructor
-        red.mintPrice = 0.1 ether;
-        blue.mintPrice = 0.1 ether;
-        yellow.mintPrice = 0.1 ether;
-        green.mintPrice = 0.1 ether;
-        red.oldSupply; // 0 supply first
-        blue.oldSupply;
-        green.oldSupply;
-        yellow.oldSupply;
-        colorToNFT[0] = red;
-        colorToNFT[1] = blue;
-        colorToNFT[2] = green;
-        colorToNFT[3] = yellow;
-
+        _red = 0x5FbDB2315678afecb367f032d93F642f64180aa3;
+        _blue = 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512;
+        _yellow = 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0;
+        _green = 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9;
         // references to other contracts
-        // redContract = IRed(_red);
-        // blue = IBlue(_blue);
-        // yellow = IYellow(_yellow);
-        // green = IGreen(_green);
+        redContract = IRed(_red);
+        blueContract = IBlue(_blue);
+        yellowContract = IYellow(_yellow);
+        greenContract = IGreen(_green);
+        
+
     }
 
-    NFT public red;
-    NFT public blue;
-    NFT public green;
-    NFT public yellow;
+    NFT red = NFT(0.1 ether, 0, 0);
+    NFT blue = NFT(0.1 ether, 0, 1);
+    NFT green = NFT(0.1 ether, 0, 2);
+    NFT yellow = NFT(0.1 ether, 0, 3);
+
+    colorToNFT[0] = red;
+    colorToNFT[1] = blue;
+    colorToNFT[2] = green;
+    colorToNFT[3] = yellow;
+
 
     struct NFT {
+        uint256 mintPrice;
         uint256 oldSupply;
         uint256 color;
-        uint256 mintPrice;
         // address nftAddress;
     }
 
@@ -185,10 +182,10 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         require(roundToVoter[msg.sender][winningRound].claimedReward == false);
         require(roundToVoter[msg.sender][winningRound].minted == false, "Already minted this round");
         
-            roundToVoter[msg.sender][winningRound].color == 0 ? IRed(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47).mintWinner(msg.sender) 
-        : roundToVoter[msg.sender][winningRound].color == 1 ? IBlue(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47).mintWinner(msg.sender) 
-        : roundToVoter[msg.sender][winningRound].color == 2 ? IGreen(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47).mintWinner(msg.sender) 
-        : IYellow(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47).mintWinner(msg.sender);
+        roundToVoter[msg.sender][winningRound].color == 0 ? redContract.mintWinner(msg.sender) 
+        : roundToVoter[msg.sender][winningRound].color == 1 ? blueContract.mintWinner(msg.sender) 
+        : roundToVoter[msg.sender][winningRound].color == 2 ? greenContract.mintWinner(msg.sender) 
+        : yellowContract.mintWinner(msg.sender);
 
 
         // have to know the amount sent

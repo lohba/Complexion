@@ -7,9 +7,19 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/security/PullPayment.sol";
 import "hardhat/console.sol";
 
+
 interface IRed {
-    function mintWinner(string) external;
+    function mintWinner(address, string memory) external;
 }
+// interface IBlue {
+//     function mintWinner(string) external;
+// }
+// interface IGreen {
+//     function mintWinner(string) external;
+// }
+// interface IYellow {
+//     function mintWinner(string) external;
+// }
 
 contract GameLogic is PullPayment, ReentrancyGuard{
     uint256 public roundNumber = 1;
@@ -19,14 +29,11 @@ contract GameLogic is PullPayment, ReentrancyGuard{
     address public sidePotPool;
     uint256 public resetTime;
     uint256 public votersInRound;
-    
-
-    //IRed redContract;
 
    //address RedContract = 0xD7ACd2a9FD159E69Bb102A1ca21C9a3e3A5F771B;
 
     mapping(string => NFT) public colorToNFT;
-    mapping(uint256 => bool) public winnerRound;
+    //mapping(uint256 => bool) public winnerRound;
     //mapping(string => bool) public winnerColor;
 
     mapping(address => mapping(uint => Voter)) public roundToVoter; // address => round => Voter struct
@@ -49,10 +56,10 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         blue.oldSupply;
         green.oldSupply;
         yellow.oldSupply;
-        colorToNFT["red"] = red;
-        colorToNFT["blue"] = blue;
-        colorToNFT["yellow"] = yellow;
-        colorToNFT["green"] = green;
+        colorToNFT[0] = red;
+        colorToNFT[1] = blue;
+        colorToNFT[2] = green;
+        colorToNFT[3] = yellow;
 
         // references to other contracts
         // redContract = IRed(_red);
@@ -68,14 +75,14 @@ contract GameLogic is PullPayment, ReentrancyGuard{
 
     struct NFT {
         uint256 oldSupply;
-        string color;
+        uint256 color;
         uint256 mintPrice;
         // address nftAddress;
     }
 
     struct Voter {
         bool voted;
-        string color;
+        uint256 color;
         uint256 mintPrice;
         bool minted;
         bool claimedReward;
@@ -92,12 +99,16 @@ contract GameLogic is PullPayment, ReentrancyGuard{
     WinnerRound[] winners;
     // query give me winnerRound[1]
 
-
     function setPrice() internal pure {
         return;
     }
 
-    function voteForColor(uint _color) public payable {
+    // red = 0
+    // blue = 1
+    // green = 2
+    // yellow = 3
+
+    function voteForColor(uint256 _color) public payable {
         NFT storage currentNFT = colorToNFT[_color];
 
         // require timechecking based on reset time;
@@ -154,7 +165,7 @@ contract GameLogic is PullPayment, ReentrancyGuard{
     // Winners from the round can claim round reward or mint NFT
     function claimReward() external payable nonReentrant {
         require(roundToVoter[msg.sender][winningRound].voted == true, "have to vote");
-        require(keccak256(abi.encodePacked(roundToVoter[msg.sender][winningRound].color)) == keccak256(abi.encodePacked(winningColor)), "Not the winning color");
+        require(roundToVoter[msg.sender][winningRound].color == winningColor);
         require(roundToVoter[msg.sender][winningRound].claimedReward == false, "Already claimed reward for this round");
         require(roundToVoter[msg.sender][winningRound].minted == false, "Already minted this round");
         // calculation for prize pool per voter based on voters in round
@@ -169,16 +180,17 @@ contract GameLogic is PullPayment, ReentrancyGuard{
     }
 
     function mintWinner() external payable nonReentrant {
-        require(keccak256(abi.encodePacked(roundToVoter[msg.sender][winningRound].color)) == keccak256(abi.encodePacked(winningColor)), "Not the winning color");
+        //require(keccak256(abi.encodePacked(roundToVoter[msg.sender][winningRound].color)) == keccak256(abi.encodePacked(winningColor)), "Not the winning color");
+        require(roundToVoter[msg.sender][winningRound].color == winningColor);
         require(roundToVoter[msg.sender][winningRound].claimedReward == false);
         require(roundToVoter[msg.sender][winningRound].minted == false, "Already minted this round");
-        console.log("minted!");
-        // run reset function 1 hour after mintwinner() is called
+        
+        roundToVoter[msg.sender][winningRound].color == 0 ? IRed(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47).mintWinner(msg.sender, URI);
 
         // have to know the amount sent
         // have to calculate the pool prize
-
-        //INFT(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47).mintWinner();
+        
+        //IRed(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47).mintWinner(msg.sender, URI);
         roundToVoter[msg.sender][winningRound].minted = true;
     }
 
@@ -187,8 +199,9 @@ function reset() external {
 
         // WinnerRound[roundNumber] = (
 
-        // )
-        //roundNumber += 1;
+        // );
+
+        roundNumber += 1;
         // reset structs for all colors
         red.oldSupply = 0;
         red.mintPrice = 0.1 ether;

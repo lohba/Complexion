@@ -10,7 +10,7 @@ import "hardhat/console.sol";
 contract RedComplexion is Ownable, ERC721Enumerable {
 
     string public _baseTokenURI;
-    
+
     constructor() ERC721("Complexion", "COMPLEX") {
     }
 
@@ -29,4 +29,3 @@ contract RedComplexion is Ownable, ERC721Enumerable {
         _baseTokenURI = baseURI;
     }
 }
-

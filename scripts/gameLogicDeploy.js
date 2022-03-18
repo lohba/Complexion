@@ -15,30 +15,6 @@ async function main() {
   
   //We get the contract to deploy
 
-  // Red
-  const RedContract = await hre.ethers.getContractFactory("Red");
-  const redContract = await RedContract.deploy();
-  await redContract.deployed();
-  console.log("Red deployed to:", redContract.address);
-
-  // Blue
-  const BlueContract = await hre.ethers.getContractFactory("Blue");
-  const blueContract = await BlueContract.deploy();
-  await blueContract.deployed();
-  console.log("Blue deployed to:", blueContract.address);
-
-  // Yellow
-  const YellowContract = await hre.ethers.getContractFactory("Yellow");
-  const yellowContract = await YellowContract.deploy();
-  await yellowContract.deployed();
-  console.log("Yellow deployed to:", yellowContract.address);
-
-  // Green
-  const GreenContract = await hre.ethers.getContractFactory("Green");
-  const greenContract = await GreenContract.deploy();
-  await greenContract.deployed();
-  console.log("Green deployed to:", greenContract.address);
-
   // Game Logic
   const GameLogic = await hre.ethers.getContractFactory("GameLogic");
   const gameLogic = await GameLogic.deploy(

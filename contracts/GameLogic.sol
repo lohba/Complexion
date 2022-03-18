@@ -185,8 +185,15 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         require(roundToVoter[msg.sender][winningRound].claimedReward == false);
         require(roundToVoter[msg.sender][winningRound].minted == false, "Already minted this round");
         
-        roundToVoter[msg.sender][winningRound].color == 0 ? IRed(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47).mintWinner(msg.sender, URI);
-        
+        roundToVoter[msg.sender][winningRound].color == 0 ? IRed(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47).mintWinner(msg.sender) 
+        : roundToVoter[msg.sender][winningRound].color == 1 ? IBlue(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47).mintWinner(msg.sender) 
+        : roundToVoter[msg.sender][winningRound].color == 2 ? IGreen(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47).mintWinner(msg.sender) 
+        : roundToVoter[msg.sender][winningRound].color == 2 ? IYellow(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47).mintWinner(msg.sender); 
+
+                uint256 price = (currentNFT.oldSupply <= 4) ? currentNFT.mintPrice
+            : (currentNFT.oldSupply <= 7) ? currentNFT.mintPrice + 0.1 ether
+            : (currentNFT.oldSupply  <= 9) ? currentNFT.mintPrice + 0.2 ether
+            : currentNFT.mintPrice + 0.3 ether;
         // have to know the amount sent
         // have to calculate the pool prize
         

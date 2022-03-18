@@ -15,10 +15,19 @@ contract RedComplexion is Ownable, ERC721Enumerable {
     constructor() ERC721("Complexion", "COMPLEX") {
     }
 
-    function mintWinner(address _minter, string memory _tokenURI) external returns(uint256) {
+    using Strings for uint256;
+    // Optional mapping for token URIs
+    mapping(uint256 => string) private _tokenURIs;
+
+    function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal virtual {
+        require(_exists(tokenId), "ERC721URIStorage: URI set of nonexistent token");
+        _tokenURIs[tokenId] = _tokenURI;
+    }
+    
+    function mintWinner(address _minter) external returns(uint256) {
         uint tokenId = totalSupply();
         _safeMint(_minter, tokenId);
-        //_setTokenURI(tokenId, tokenURI);
+        _setTokenURI(tokenId, tokenURI);
         return tokenId;
     }
 

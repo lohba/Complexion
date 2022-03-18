@@ -30,8 +30,6 @@ contract GameLogic is PullPayment, ReentrancyGuard{
     uint256 public resetTime;
     uint256 public votersInRound;
 
-   //address RedContract = 0xD7ACd2a9FD159E69Bb102A1ca21C9a3e3A5F771B;
-
     mapping(uint256 => NFT) public colorToNFT;
     //mapping(uint256 => bool) public winnerRound;
     //mapping(string => bool) public winnerColor;
@@ -43,8 +41,8 @@ contract GameLogic is PullPayment, ReentrancyGuard{
     constructor (
         address _red,
         address _blue,
-        address _yellow,
-        address _green
+        address _green,
+        address _yellow
     ) {
         _red = 0x5FbDB2315678afecb367f032d93F642f64180aa3;
         _blue = 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512;
@@ -180,7 +178,6 @@ contract GameLogic is PullPayment, ReentrancyGuard{
     }
 
     function mintWinner() external payable nonReentrant {
-        //require(keccak256(abi.encodePacked(roundToVoter[msg.sender][winningRound].color)) == keccak256(abi.encodePacked(winningColor)), "Not the winning color");
         require(roundToVoter[msg.sender][winningRound].color == winningColor);
         require(roundToVoter[msg.sender][winningRound].claimedReward == false);
         require(roundToVoter[msg.sender][winningRound].minted == false, "Already minted this round");

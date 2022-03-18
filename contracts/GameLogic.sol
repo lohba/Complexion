@@ -48,27 +48,20 @@ contract GameLogic is PullPayment, ReentrancyGuard{
     ) {
         _red = 0x5FbDB2315678afecb367f032d93F642f64180aa3;
         _blue = 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512;
-        _yellow = 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0;
         _green = 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9;
-        // references to other contracts
-        redContract = IRed(_red);
-        blueContract = IBlue(_blue);
-        yellowContract = IYellow(_yellow);
-        greenContract = IGreen(_green);
+        _yellow = 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0;
         
+        // references to other contracts
+        redContract = IRed(_red);        
+        blueContract = IBlue(_blue);
+        greenContract = IGreen(_green);
+        yellowContract = IYellow(_yellow);
 
+        colorToNFT[0] = red;
+        colorToNFT[1] = blue;
+        colorToNFT[2] = green;
+        colorToNFT[3] = yellow;
     }
-
-    NFT red = NFT(0.1 ether, 0, 0);
-    NFT blue = NFT(0.1 ether, 0, 1);
-    NFT green = NFT(0.1 ether, 0, 2);
-    NFT yellow = NFT(0.1 ether, 0, 3);
-
-    colorToNFT[0] = red;
-    colorToNFT[1] = blue;
-    colorToNFT[2] = green;
-    colorToNFT[3] = yellow;
-
 
     struct NFT {
         uint256 mintPrice;
@@ -76,6 +69,16 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         uint256 color;
         // address nftAddress;
     }
+
+    NFT public red = NFT(0.1 ether, 0, 0);
+    NFT public blue = NFT(0.1 ether, 0, 1);
+    NFT public green = NFT(0.1 ether, 0, 2);
+    NFT public yellow = NFT(0.1 ether, 0, 3);
+    
+    IRed public redContract;
+    IBlue public blueContract;
+    IGreen public greenContract;
+    IYellow public yellowContract;
 
     struct Voter {
         bool voted;
@@ -93,7 +96,7 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         NFT roundYellowStatus;
     }
 
-    WinnerRound[] winners;
+    // WinnerRound[] winners;
     // query give me winnerRound[1]
 
     function setPrice() internal pure {
@@ -187,11 +190,8 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         : roundToVoter[msg.sender][winningRound].color == 2 ? greenContract.mintWinner(msg.sender) 
         : yellowContract.mintWinner(msg.sender);
 
-
         // have to know the amount sent
-        // have to calculate the pool prize
-        
-        //IRed(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47).mintWinner(msg.sender, URI);
+        // have to calculate the pool prize        
         roundToVoter[msg.sender][winningRound].minted = true;
     }
 

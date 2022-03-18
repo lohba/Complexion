@@ -44,10 +44,10 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         address _green,
         address _yellow
     ) {
-        _red = 0x5FbDB2315678afecb367f032d93F642f64180aa3;
-        _blue = 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512;
-        _green = 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9;
-        _yellow = 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0;
+        // _red = 0x5FbDB2315678afecb367f032d93F642f64180aa3;
+        // _blue = 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512;
+        // _green = 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9;
+        // _yellow = 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0;
         
         // references to other contracts
         redContract = IRed(_red);        
@@ -68,10 +68,10 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         // address nftAddress;
     }
 
-    NFT public red = NFT(0.1 ether, 0, 0);
-    NFT public blue = NFT(0.1 ether, 0, 1);
-    NFT public green = NFT(0.1 ether, 0, 2);
-    NFT public yellow = NFT(0.1 ether, 0, 3);
+    NFT public red = NFT(0.1 ether, 0, 1);
+    NFT public blue = NFT(0.1 ether, 0, 2);
+    NFT public green = NFT(0.1 ether, 0, 3);
+    NFT public yellow = NFT(0.1 ether, 0, 4);
     
     IRed public redContract;
     IBlue public blueContract;
@@ -101,10 +101,10 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         return;
     }
 
-    // red = 0
-    // blue = 1
-    // green = 2
-    // yellow = 3
+    // red = 1
+    // blue = 2
+    // green = 3
+    // yellow = 4
 
     function voteForColor(uint256 _color) public payable {
         NFT storage currentNFT = colorToNFT[_color];
@@ -163,7 +163,7 @@ contract GameLogic is PullPayment, ReentrancyGuard{
     // Winners from the round can claim round reward or mint NFT
     function claimReward() external payable nonReentrant {
         require(roundToVoter[msg.sender][winningRound].voted == true, "have to vote");
-        require(roundToVoter[msg.sender][winningRound].color == winningColor);
+        require(roundToVoter[msg.sender][winningRound].color == winningColor, "have to be winning color");
         require(roundToVoter[msg.sender][winningRound].claimedReward == false, "Already claimed reward for this round");
         require(roundToVoter[msg.sender][winningRound].minted == false, "Already minted this round");
         // calculation for prize pool per voter based on voters in round
@@ -178,13 +178,14 @@ contract GameLogic is PullPayment, ReentrancyGuard{
     }
 
     function mintWinner() external payable nonReentrant {
-        require(roundToVoter[msg.sender][winningRound].color == winningColor);
-        require(roundToVoter[msg.sender][winningRound].claimedReward == false);
+        require(roundToVoter[msg.sender][winningRound].voted == true, "have to vote");
+        require(roundToVoter[msg.sender][winningRound].color == winningColor, "have to be winning color");
+        require(roundToVoter[msg.sender][winningRound].claimedReward == false, "Already claimed reward for this round");
         require(roundToVoter[msg.sender][winningRound].minted == false, "Already minted this round");
         
-        roundToVoter[msg.sender][winningRound].color == 0 ? redContract.mintWinner(msg.sender) 
-        : roundToVoter[msg.sender][winningRound].color == 1 ? blueContract.mintWinner(msg.sender) 
-        : roundToVoter[msg.sender][winningRound].color == 2 ? greenContract.mintWinner(msg.sender) 
+        roundToVoter[msg.sender][winningRound].color == 1 ? redContract.mintWinner(msg.sender) 
+        : roundToVoter[msg.sender][winningRound].color == 2 ? blueContract.mintWinner(msg.sender) 
+        : roundToVoter[msg.sender][winningRound].color == 3 ? greenContract.mintWinner(msg.sender) 
         : yellowContract.mintWinner(msg.sender);
 
         // have to know the amount sent

@@ -38,7 +38,23 @@ async function main() {
   const greenContract = await GreenContract.deploy();
   await greenContract.deployed();
   console.log("Green deployed to:", greenContract.address);
-  
+
+  // Game Logic
+  const GameLogic = await hre.ethers.getContractFactory("GameLogic");
+  const gameLogic = await GameLogic.deploy(
+    redContract.address,
+    blueContract.address,
+    yellowContract.address,
+    greenContract.address
+  );
+
+  redContract.transferOwnership(gameLogic.address);
+  blueContract.transferOwnership(gameLogic.address);
+  yellowContract.transferOwnership(gameLogic.address);
+  greenContract.transferOwnership(gameLogic.address);
+
+  await gameLogic.deployed();
+  console.log("GameLogic deployed to:", gameLogic.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

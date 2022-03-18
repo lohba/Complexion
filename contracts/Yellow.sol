@@ -24,11 +24,13 @@ contract Yellow is Ownable, ERC721Enumerable {
         _tokenURIs[tokenId] = _tokenURI;
     }
     
-    function mintWinner(address _minter) external returns(uint256) {
+    function tokenURI(uint256 tokenId) override public view returns (string memory) {
+        return yellowTokenURI;
+    }
+    
+    function mintWinner(address _minter) external onlyOwner{
         uint tokenId = totalSupply();
         _safeMint(_minter, tokenId);
-        _setTokenURI(tokenId, yellowTokenURI);
-        return tokenId;
     }
 
     function _baseURI() internal view virtual override returns (string memory) {

@@ -13,6 +13,7 @@ contract Red is Ownable, ERC721Enumerable {
     string redTokenURI = "https://gateway.pinata.cloud/ipfs/QmNeiZxZTZHkUuAH1EUZtgDXZcfXr9PoNk1WFYXdmCNYrx/Red.json";
 
     constructor() ERC721("Complexion", "COMPLEX") {
+        
     }
 
     using Strings for uint256;
@@ -24,11 +25,13 @@ contract Red is Ownable, ERC721Enumerable {
         _tokenURIs[tokenId] = _tokenURI;
     }
     
-    function mintWinner(address _minter) external returns(uint256) {
+    function tokenURI(uint256 tokenId) override public view returns (string memory) {
+        return redTokenURI;
+    }
+    
+    function mintWinner(address _minter) external onlyOwner{
         uint tokenId = totalSupply();
         _safeMint(_minter, tokenId);
-        _setTokenURI(tokenId, redTokenURI);
-        return tokenId;
     }
 
     function _baseURI() internal view virtual override returns (string memory) {

@@ -10,7 +10,7 @@ import "hardhat/console.sol";
 contract Green is Ownable, ERC721Enumerable {
 
     string public _baseTokenURI;
-    string GreenTokenURI = "https://gateway.pinata.cloud/ipfs/QmNeiZxZTZHkUuAH1EUZtgDXZcfXr9PoNk1WFYXdmCNYrx/Green.json";
+    string greenTokenURI = "https://gateway.pinata.cloud/ipfs/QmNeiZxZTZHkUuAH1EUZtgDXZcfXr9PoNk1WFYXdmCNYrx/Green.json";
 
     constructor() ERC721("Complexion", "COMPLEX") {
     }
@@ -24,11 +24,13 @@ contract Green is Ownable, ERC721Enumerable {
         _tokenURIs[tokenId] = _tokenURI;
     }
     
-    function mintWinner(address _minter) external returns(uint256) {
+    function tokenURI(uint256 tokenId) override public view returns (string memory) {
+        return greenTokenURI;
+    }
+    
+    function mintWinner(address _minter) external onlyOwner{
         uint tokenId = totalSupply();
         _safeMint(_minter, tokenId);
-        _setTokenURI(tokenId, GreenTokenURI);
-        return tokenId;
     }
 
     function _baseURI() internal view virtual override returns (string memory) {

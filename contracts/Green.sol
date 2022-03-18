@@ -7,10 +7,10 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "hardhat/console.sol";
 
-contract GreenComplexion is Ownable, ERC721Enumerable {
+contract Green is Ownable, ERC721Enumerable {
 
     string public _baseTokenURI;
-    string tokenURI = "https://gateway.pinata.cloud/ipfs/QmNeiZxZTZHkUuAH1EUZtgDXZcfXr9PoNk1WFYXdmCNYrx/Green.json";
+    string GreenTokenURI = "https://gateway.pinata.cloud/ipfs/QmNeiZxZTZHkUuAH1EUZtgDXZcfXr9PoNk1WFYXdmCNYrx/Green.json";
 
     constructor() ERC721("Complexion", "COMPLEX") {
     }
@@ -27,7 +27,7 @@ contract GreenComplexion is Ownable, ERC721Enumerable {
     function mintWinner(address _minter) external returns(uint256) {
         uint tokenId = totalSupply();
         _safeMint(_minter, tokenId);
-        _setTokenURI(tokenId, tokenURI);
+        _setTokenURI(tokenId, GreenTokenURI);
         return tokenId;
     }
 

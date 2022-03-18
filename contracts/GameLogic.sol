@@ -9,21 +9,21 @@ import "hardhat/console.sol";
 
 
 interface IRed {
-    function mintWinner(address, string memory) external;
+    function mintWinner(address) external;
 }
-// interface IBlue {
-//     function mintWinner(string) external;
-// }
-// interface IGreen {
-//     function mintWinner(string) external;
-// }
-// interface IYellow {
-//     function mintWinner(string) external;
-// }
+interface IBlue {
+    function mintWinner(address) external;
+}
+interface IGreen {
+    function mintWinner(address) external;
+}
+interface IYellow {
+    function mintWinner(address) external;
+}
 
 contract GameLogic is PullPayment, ReentrancyGuard{
     uint256 public roundNumber = 1;
-    string public winningColor;
+    uint256 public winningColor;
     uint256 public winningRound;
     uint256 public currentRoundPool;
     address public sidePotPool;
@@ -32,13 +32,13 @@ contract GameLogic is PullPayment, ReentrancyGuard{
 
    //address RedContract = 0xD7ACd2a9FD159E69Bb102A1ca21C9a3e3A5F771B;
 
-    mapping(string => NFT) public colorToNFT;
+    mapping(uint256 => NFT) public colorToNFT;
     //mapping(uint256 => bool) public winnerRound;
     //mapping(string => bool) public winnerColor;
 
     mapping(address => mapping(uint => Voter)) public roundToVoter; // address => round => Voter struct
 
-    event Voted(address voter, uint256 price, uint256 roundNumber, string color);
+    event Voted(address voter, uint256 price, uint256 roundNumber, uint256 color);
 
     constructor (
         address _red,
@@ -185,15 +185,12 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         require(roundToVoter[msg.sender][winningRound].claimedReward == false);
         require(roundToVoter[msg.sender][winningRound].minted == false, "Already minted this round");
         
-        roundToVoter[msg.sender][winningRound].color == 0 ? IRed(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47).mintWinner(msg.sender) 
+            roundToVoter[msg.sender][winningRound].color == 0 ? IRed(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47).mintWinner(msg.sender) 
         : roundToVoter[msg.sender][winningRound].color == 1 ? IBlue(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47).mintWinner(msg.sender) 
         : roundToVoter[msg.sender][winningRound].color == 2 ? IGreen(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47).mintWinner(msg.sender) 
-        : roundToVoter[msg.sender][winningRound].color == 2 ? IYellow(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47).mintWinner(msg.sender); 
+        : IYellow(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47).mintWinner(msg.sender);
 
-                uint256 price = (currentNFT.oldSupply <= 4) ? currentNFT.mintPrice
-            : (currentNFT.oldSupply <= 7) ? currentNFT.mintPrice + 0.1 ether
-            : (currentNFT.oldSupply  <= 9) ? currentNFT.mintPrice + 0.2 ether
-            : currentNFT.mintPrice + 0.3 ether;
+
         // have to know the amount sent
         // have to calculate the pool prize
         

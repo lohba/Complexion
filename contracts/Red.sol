@@ -10,7 +10,8 @@ import "hardhat/console.sol";
 contract RedComplexion is Ownable, ERC721Enumerable {
 
     string public _baseTokenURI;
-    
+    string tokenURI = "https://gateway.pinata.cloud/ipfs/QmNeiZxZTZHkUuAH1EUZtgDXZcfXr9PoNk1WFYXdmCNYrx/Red.json";
+
     constructor() ERC721("Complexion", "COMPLEX") {
     }
 

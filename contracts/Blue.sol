@@ -6,9 +6,10 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "hardhat/console.sol";
 
-contract RedComplexion is Ownable, ERC721Enumerable {
+contract BlueComplexion is Ownable, ERC721Enumerable {
 
     string public _baseTokenURI;
+    string tokenURI = "https://gateway.pinata.cloud/ipfs/QmNeiZxZTZHkUuAH1EUZtgDXZcfXr9PoNk1WFYXdmCNYrx/Blue.json";
 
     constructor() ERC721("Complexion", "COMPLEX") {
 

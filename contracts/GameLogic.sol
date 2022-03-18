@@ -186,7 +186,7 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         require(roundToVoter[msg.sender][winningRound].minted == false, "Already minted this round");
         
         roundToVoter[msg.sender][winningRound].color == 0 ? IRed(0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47).mintWinner(msg.sender, URI);
-
+        
         // have to know the amount sent
         // have to calculate the pool prize
         

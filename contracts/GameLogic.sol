@@ -55,10 +55,10 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         greenContract = IGreen(_green);
         yellowContract = IYellow(_yellow);
 
-        colorToNFT[0] = red;
-        colorToNFT[1] = blue;
-        colorToNFT[2] = green;
-        colorToNFT[3] = yellow;
+        colorToNFT[1] = red;
+        colorToNFT[2] = blue;
+        colorToNFT[3] = green;
+        colorToNFT[4] = yellow;
     }
 
     struct NFT {

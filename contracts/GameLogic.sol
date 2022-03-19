@@ -10,6 +10,7 @@ import "hardhat/console.sol";
 
 interface IRed {
     function mintWinner(address) external;
+    function burn(uint256) external;
 }
 interface IBlue {
     function mintWinner(address) external;
@@ -18,6 +19,9 @@ interface IGreen {
     function mintWinner(address) external;
 }
 interface IYellow {
+    function mintWinner(address) external;
+}
+interface ISpecialNFT {
     function mintWinner(address) external;
 }
 
@@ -42,7 +46,8 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         address _red,
         address _blue,
         address _green,
-        address _yellow
+        address _yellow,
+        address _specialNFT
     ) {
         // _red = 0x5FbDB2315678afecb367f032d93F642f64180aa3;
         // _blue = 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512;
@@ -54,6 +59,7 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         blueContract = IBlue(_blue);
         greenContract = IGreen(_green);
         yellowContract = IYellow(_yellow);
+        specialNFTContract = ISpecialNFT(_specialNFT);
 
         colorToNFT[1] = red;
         colorToNFT[2] = blue;
@@ -77,6 +83,7 @@ contract GameLogic is PullPayment, ReentrancyGuard{
     IBlue public blueContract;
     IGreen public greenContract;
     IYellow public yellowContract;
+    ISpecialNFT public specialNFTContract;
 
     struct Voter {
         bool voted;
@@ -192,6 +199,15 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         // have to calculate the pool prize        
         roundToVoter[msg.sender][winningRound].minted = true;
     }
+
+    function burnColorForSpecial(uint256[] calldata tokenIds) external {
+        uint256 count = tokenIds.length;
+        require(count <= 4, "Too many tokens");
+            for (uint256 i; i < count; i++) {
+                redContract.burn(tokenIds[i]);
+    }
+        specialNFTContract.mintWinner(msg.sender);
+}
 
 function reset() external {
         require(block.timestamp > resetTime, "Not yet ready");

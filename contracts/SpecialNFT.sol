@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "hardhat/console.sol";
 
-contract Red is Ownable, ERC721Enumerable {
+contract SpecialNFT is Ownable, ERC721Enumerable {
 
     string public _baseTokenURI;
     string specialTokenURI = "https://gateway.pinata.cloud/ipfs/QmQ3MqgvNJkZZ2oKjLh1nLNDMmBQvTJ1SL3bX4t9bmMuzs";

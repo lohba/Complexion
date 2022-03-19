@@ -207,6 +207,10 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         // have to calculate the pool prize        
         roundToVoter[msg.sender][winningRound].minted = true;
     }
+        // let the user pass the tokenIDs in a deterministic order. So an array of 4 values wherein the first value corresponds to red color, second to blue, third to green, foruth to yellow. 
+        // iterate over the 4 tokenIDs, and call the ownerOf method of respsective color contracts and require that the owner is msg.sender. If it's not the contract would revert and execution stops
+        // Iterate over the 4 tokenIds again and burn them 
+        // Mint special NFT
 
     function mintSpecialNFT(uint256[] calldata tokenIds) external {
         uint256 count = tokenIds.length;
@@ -231,24 +235,24 @@ contract GameLogic is PullPayment, ReentrancyGuard{
 // Iterate over the 4 tokenIds again and burn them 
 // Mint special NFT
 
-function reset() external {
-        require(block.timestamp > resetTime, "Not yet ready");
+    function reset() external {
+            require(block.timestamp > resetTime, "Not yet ready");
 
-        // WinnerRound[roundNumber] = (
+            // WinnerRound[roundNumber] = (
 
-        // );
+            // );
 
-        roundNumber += 1;
-        // reset structs for all colors
-        red.oldSupply = 0;
-        red.mintPrice = 0.1 ether;
-        blue.oldSupply = 0;
-        blue.mintPrice = 0.1 ether;
-        yellow.oldSupply = 0;
-        yellow.mintPrice = 0.1 ether;
-        green.oldSupply = 0;
-        green.mintPrice = 0.1 ether;
-    }
+            roundNumber += 1;
+            // reset structs for all colors
+            red.oldSupply = 0;
+            red.mintPrice = 0.1 ether;
+            blue.oldSupply = 0;
+            blue.mintPrice = 0.1 ether;
+            yellow.oldSupply = 0;
+            yellow.mintPrice = 0.1 ether;
+            green.oldSupply = 0;
+            green.mintPrice = 0.1 ether;
+        }
 }
 
 

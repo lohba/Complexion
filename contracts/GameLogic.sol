@@ -11,15 +11,23 @@ import "hardhat/console.sol";
 interface IRed {
     function mintWinner(address) external;
     function burn(uint256) external;
+    function ownerOf(uint256 tokenId) external returns (address);
 }
+
 interface IBlue {
     function mintWinner(address) external;
+    function burn(uint256) external;
+    function ownerOf(uint256 tokenId) external returns (address);
 }
 interface IGreen {
     function mintWinner(address) external;
+    function burn(uint256) external;
+    function ownerOf(uint256 tokenId) external returns (address);
 }
 interface IYellow {
     function mintWinner(address) external;
+    function burn(uint256) external;
+    function ownerOf(uint256 tokenId) external returns (address);
 }
 interface ISpecialNFT {
     function mintWinner(address) external;
@@ -200,14 +208,28 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         roundToVoter[msg.sender][winningRound].minted = true;
     }
 
-    function burnColorForSpecial(uint256[] calldata tokenIds) external {
+    function mintSpecialNFT(uint256[] calldata tokenIds) external {
         uint256 count = tokenIds.length;
         require(count <= 4, "Too many tokens");
-            for (uint256 i; i < count; i++) {
-                redContract.burn(tokenIds[i]);
-    }
+        address redOwner = redContract.ownerOf(tokenIds[0]);
+        address blueOwner = blueContract.ownerOf(tokenIds[1]);
+        address greenOwner = greenContract.ownerOf(tokenIds[2]);
+        address yellowOwner = yellowContract.ownerOf(tokenIds[3]); 
+        require(msg.sender ==  redOwner, "You don't own red");
+        require(msg.sender ==  blueOwner, "You don't own blue");
+        require(msg.sender ==  greenOwner, "You don't own green");
+        require(msg.sender ==  yellowOwner, "You don't own yellow");
+        redContract.burn(tokenIds[0]);
+        blueContract.burn(tokenIds[1]);
+        greenContract.burn(tokenIds[2]);
+        yellowContract.burn(tokenIds[3]);
         specialNFTContract.mintWinner(msg.sender);
 }
+
+// let the user pass the tokenIDs in a deterministic order. So an array of 4 values wherein the first value corresponds to red color, second to blue, third to green, foruth to yellow. 
+// iterate over the 4 tokenIDs, and call the ownerOf method of respsective color contracts and require that the owner is msg.sender. If it's not the contract would revert and execution stops
+// Iterate over the 4 tokenIds again and burn them 
+// Mint special NFT
 
 function reset() external {
         require(block.timestamp > resetTime, "Not yet ready");

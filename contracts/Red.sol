@@ -20,6 +20,8 @@ contract Red is Ownable, ERC721Enumerable, ERC721Burnable {
     using Strings for uint256;
     // Optional mapping for token URIs
     mapping(uint256 => string) private _tokenURIs;
+    // Mapping from token ID to owner address
+    mapping(uint256 => address) private _owners;
 
     function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal virtual {
         require(_exists(tokenId), "ERC721URIStorage: URI set of nonexistent token");
@@ -46,6 +48,12 @@ contract Red is Ownable, ERC721Enumerable, ERC721Burnable {
         //solhint-disable-next-line max-line-length
         require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721Burnable: caller is not owner nor approved");
         _burn(tokenId);
+    }
+
+    function ownerOf(uint256 tokenId) public view virtual override returns (address) {
+        address owner = _owners[tokenId];
+        require(owner != address(0), "ERC721: owner query for nonexistent token");
+        return owner;
     }
 
     // For ERC721Burnable Library to work ↓

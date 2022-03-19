@@ -1,13 +1,13 @@
 module.exports = {
     style: {
-        postcss: {
+        postOptions: {
             plugins: [
                 require('tailwindcss'),
                 require('autoprefixer'),
             ],
         },
     },
-    webpack: {
+/*     webpack: {
         configure: (webpackConfig) => {
             if (process.env.NODE_ENV === 'production') {
                 // remove console in production
@@ -19,5 +19,5 @@ module.exports = {
             
             return webpackConfig;
         },
-    },
+    }, */
 }

@@ -1,15 +1,24 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
+import "./index.scss";
 import App from "./App.tsx";
 import reportWebVitals from "./reportWebVitals";
-import store from './store/store';
-import {Provider} from "react-redux";
+import store from "./store/store";
+import { Provider } from "react-redux";
+import Dataloader from "./components/DataLoader/DataLoader";
+import { BrowserRouter as Router } from "react-router-dom";
+import MainWeb3Wrapper from "./components/Web3Provider/Main/MainWeb3Wrapper";
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store()}>
-      <App />
+      <Router>
+        <MainWeb3Wrapper>
+          <Dataloader>
+            <App />
+          </Dataloader>
+        </MainWeb3Wrapper>
+      </Router>
     </Provider>
   </React.StrictMode>,
   document.getElementById("root")

@@ -5,7 +5,7 @@
     "module": "esnext",
     "allowJs": true,
     "jsx": "react-jsx",
-    "strict": true,
+    "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -26,6 +26,6 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "../../Marco/front-marco/src"
+    "src"
   ]
 }

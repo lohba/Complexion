@@ -13,7 +13,7 @@ contract SpecialNFT is Ownable, ERC721Enumerable {
     string specialTokenURI = "https://gateway.pinata.cloud/ipfs/QmQ3MqgvNJkZZ2oKjLh1nLNDMmBQvTJ1SL3bX4t9bmMuzs";
 
     constructor() ERC721("Complexion", "COMPLEX") {
-        
+
     }
 
     using Strings for uint256;
@@ -24,11 +24,11 @@ contract SpecialNFT is Ownable, ERC721Enumerable {
         require(_exists(tokenId), "ERC721URIStorage: URI set of nonexistent token");
         _tokenURIs[tokenId] = _tokenURI;
     }
-    
+
     function tokenURI(uint256 tokenId) override public view returns (string memory) {
         return specialTokenURI;
     }
-    
+
     function mintWinner(address _minter) external onlyOwner{
         uint tokenId = totalSupply();
         _safeMint(_minter, tokenId);

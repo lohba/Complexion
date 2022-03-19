@@ -7,7 +7,6 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/security/PullPayment.sol";
 import "hardhat/console.sol";
 
-
 interface IRed {
     function mintWinner(address) external;
     function burn(uint256) external;
@@ -50,31 +49,6 @@ contract GameLogic is PullPayment, ReentrancyGuard{
 
     event Voted(address voter, uint256 price, uint256 roundNumber, uint256 color);
 
-    constructor (
-        address _red,
-        address _blue,
-        address _green,
-        address _yellow,
-        address _specialNFT
-    ) {
-        // _red = 0x5FbDB2315678afecb367f032d93F642f64180aa3;
-        // _blue = 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512;
-        // _green = 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9;
-        // _yellow = 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0;
-        
-        // references to other contracts
-        redContract = IRed(_red);        
-        blueContract = IBlue(_blue);
-        greenContract = IGreen(_green);
-        yellowContract = IYellow(_yellow);
-        specialNFTContract = ISpecialNFT(_specialNFT);
-
-        colorToNFT[1] = red;
-        colorToNFT[2] = blue;
-        colorToNFT[3] = green;
-        colorToNFT[4] = yellow;
-    }
-
     struct NFT {
         uint256 mintPrice;
         uint256 oldSupply;
@@ -86,7 +60,7 @@ contract GameLogic is PullPayment, ReentrancyGuard{
     NFT public blue = NFT(0.1 ether, 0, 2);
     NFT public green = NFT(0.1 ether, 0, 3);
     NFT public yellow = NFT(0.1 ether, 0, 4);
-    
+
     IRed public redContract;
     IBlue public blueContract;
     IGreen public greenContract;
@@ -109,12 +83,31 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         NFT roundYellowStatus;
     }
 
+    constructor (
+        address _red,
+        address _blue,
+        address _green,
+        address _yellow
+    ) {
+        // _red = 0x5FbDB2315678afecb367f032d93F642f64180aa3;
+        // _blue = 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512;
+        // _green = 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9;
+        // _yellow = 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0;
+
+        // references to other contracts
+        redContract = IRed(_red);
+        blueContract = IBlue(_blue);
+        greenContract = IGreen(_green);
+        yellowContract = IYellow(_yellow);
+
+        colorToNFT[1] = red;
+        colorToNFT[2] = blue;
+        colorToNFT[3] = green;
+        colorToNFT[4] = yellow;
+    }
+
     // WinnerRound[] winners;
     // query give me winnerRound[1]
-
-    function setPrice() internal pure {
-        return;
-    }
 
     // red = 1
     // blue = 2
@@ -125,6 +118,7 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         NFT storage currentNFT = colorToNFT[_color];
 
         // require timechecking based on reset time;
+        require(_color >= 1 && _color <= 4, "wrong color");
         require(roundToVoter[msg.sender][roundNumber].voted == false, "Already voted this round"); // check player hasn't voted this round);
         // update NFT supply
         currentNFT.oldSupply += 1;
@@ -150,7 +144,7 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         console.log("Supply round number is ", roundNumber);
 
         // Calcualte distribution and send ETH to currentPool and sidePoool using PullPayment
-        
+
         uint256 valueSentWhenVoting = msg.value * 90 / 100;
          _asyncTransfer(msg.sender, valueSentWhenVoting);
         // _asyncTransfer(sidePotPool, msg.value * 9 / 100);
@@ -197,19 +191,19 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         require(roundToVoter[msg.sender][winningRound].color == winningColor, "have to be winning color");
         require(roundToVoter[msg.sender][winningRound].claimedReward == false, "Already claimed reward for this round");
         require(roundToVoter[msg.sender][winningRound].minted == false, "Already minted this round");
-        
-        roundToVoter[msg.sender][winningRound].color == 1 ? redContract.mintWinner(msg.sender) 
-        : roundToVoter[msg.sender][winningRound].color == 2 ? blueContract.mintWinner(msg.sender) 
-        : roundToVoter[msg.sender][winningRound].color == 3 ? greenContract.mintWinner(msg.sender) 
+
+        roundToVoter[msg.sender][winningRound].color == 1 ? redContract.mintWinner(msg.sender)
+        : roundToVoter[msg.sender][winningRound].color == 2 ? blueContract.mintWinner(msg.sender)
+        : roundToVoter[msg.sender][winningRound].color == 3 ? greenContract.mintWinner(msg.sender)
         : yellowContract.mintWinner(msg.sender);
 
         // have to know the amount sent
-        // have to calculate the pool prize        
+        // have to calculate the pool prize
         roundToVoter[msg.sender][winningRound].minted = true;
     }
-        // let the user pass the tokenIDs in a deterministic order. So an array of 4 values wherein the first value corresponds to red color, second to blue, third to green, foruth to yellow. 
+        // let the user pass the tokenIDs in a deterministic order. So an array of 4 values wherein the first value corresponds to red color, second to blue, third to green, foruth to yellow.
         // iterate over the 4 tokenIDs, and call the ownerOf method of respsective color contracts and require that the owner is msg.sender. If it's not the contract would revert and execution stops
-        // Iterate over the 4 tokenIds again and burn them 
+        // Iterate over the 4 tokenIds again and burn them
         // Mint special NFT
 
     function mintSpecialNFT(uint256[] calldata tokenIds) external {
@@ -218,7 +212,7 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         address redOwner = redContract.ownerOf(tokenIds[0]);
         address blueOwner = blueContract.ownerOf(tokenIds[1]);
         address greenOwner = greenContract.ownerOf(tokenIds[2]);
-        address yellowOwner = yellowContract.ownerOf(tokenIds[3]); 
+        address yellowOwner = yellowContract.ownerOf(tokenIds[3]);
         require(msg.sender ==  redOwner, "You don't own red");
         require(msg.sender ==  blueOwner, "You don't own blue");
         require(msg.sender ==  greenOwner, "You don't own green");
@@ -230,9 +224,9 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         specialNFTContract.mintWinner(msg.sender);
 }
 
-// let the user pass the tokenIDs in a deterministic order. So an array of 4 values wherein the first value corresponds to red color, second to blue, third to green, foruth to yellow. 
+// let the user pass the tokenIDs in a deterministic order. So an array of 4 values wherein the first value corresponds to red color, second to blue, third to green, foruth to yellow.
 // iterate over the 4 tokenIDs, and call the ownerOf method of respsective color contracts and require that the owner is msg.sender. If it's not the contract would revert and execution stops
-// Iterate over the 4 tokenIds again and burn them 
+// Iterate over the 4 tokenIds again and burn them
 // Mint special NFT
 
     function reset() external {

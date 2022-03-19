@@ -32,15 +32,12 @@ const Core: React.FC<ICoreProps> = (props) => {
     if (!gameLogicContract) {
       return;
     }
-    // red = 1
-    // blue = 2
-    // green = 3
-    // yellow = 4
+
     let teams = [];
-    const indexes = [1,2,3,4]
+    const indexes = [1, 2, 3, 4];
     for (const index of indexes) {
       const teamData = await gameLogicContract.colorToNFT(index);
-      console.log('TEAM INDEX => ',index, teamData);
+      console.log("TEAM INDEX => ", index, teamData);
 
       const team = {
         color: parseInt(teamData.color.toString()),
@@ -74,25 +71,33 @@ const Core: React.FC<ICoreProps> = (props) => {
   const teamStack = (data: teamData, index: number) => {
     const list = Array.from(Array(data.oldSupply).keys());
     return <div key={index} className={"relative flex flex-col h-32 w-36"}>
-      {Array.from(Array(data.oldSupply).keys()).map((red, i) => {
+      {list.map((red, i) => {
         return (
-          <section key={data.oldSupply}>
-            <div
-              style={{
-                bottom: 30 * i,
-                backgroundColor: index === 0 ? "#F16161" :
-                  index === 1 ? "#66B1DC" :
-                    index === 2 ? "#7FEFAC" :
-                      index === 3 ? "#F9E958" :
-                        "white"
-              }}
-              className={cx("flex items-center justify-center shadow absolute h-32 w-32 rounded", styles.layer)}
-            >
-              <h2 className={"text-4xl"}>
-                {data.oldSupply}
-              </h2>
-            </div>
-          </section>);
+          <React.Fragment>
+            <section key={data.oldSupply}>
+              <div
+                style={{
+                  bottom: 30 * i,
+                  backgroundColor: index === 0 ? "#F16161" :
+                    index === 1 ? "#66B1DC" :
+                      index === 2 ? "#7FEFAC" :
+                        index === 3 ? "#F9E958" :
+                          "white"
+                }}
+                className={cx("flex items-center justify-center shadow absolute h-32 w-32 rounded", styles.layer)}
+              >
+                <h2 className={"text-4xl"}>
+                  {data.oldSupply}
+                </h2>
+              </div>
+            </section>
+            <section>
+              <p className={"text-xl"}>
+                {data.mintPrice}
+              </p>
+            </section>
+          </React.Fragment>
+        );
       })}
 
       <button
@@ -100,14 +105,14 @@ const Core: React.FC<ICoreProps> = (props) => {
           vote(index + 1, data.mintPrice);
         }}
         className={"hover:shadow border text-grey-400 tracking-wide border-8 rounded-lg bg-white absolute -bottom-28 w-32 h-12 items-center flex justify-center"}>
-        <h2 className={"text-gray-400 hover:text-gray-800"}>Join team</h2>
+        <h2 className={"text-gray-400 hover:text-gray-800"}>Add card</h2>
       </button>
     </div>;
   };
 
   return (
-    <section className={"relative flex justify-center items-center h-screen w-screen bg-slate-200"}>
-      <div className="max-w-screen-md w-full flex items-center justify-between">
+    <section className={"relative flex justify-center items-end h-screen w-screen bg-slate-200"}>
+      <div className="max-w-screen-md pb-40 w-full flex items-center justify-between">
         {teams.map((team, i) => teamStack(team, i))}
       </div>
     </section>

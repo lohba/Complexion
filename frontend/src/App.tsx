@@ -11,6 +11,7 @@ function App() {
       <WalletProvider>
         <div className="container">
           <NavBar />
+
           <Core/>
           <Footer />
         </div>

@@ -4,9 +4,9 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
-const artifacts = require("hardhat");
-const ethers = require("hardhat");
 const fs = require("fs");
+
+import {artifacts, network} from "hardhat";
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
@@ -17,7 +17,7 @@ async function main() {
   // await hre.run('compile');
 
   //We get the contract to deploy
-  let contracts = [];
+  let contracts: any[] = [];
 
   // ethers is avaialble in the global scope
   const [deployer] = await hre.ethers.getSigners();
@@ -27,7 +27,6 @@ async function main() {
   );
 
   console.log("Account balance:", (await deployer.getBalance()).toString());
-
 
   // Red
   const RedContract = await hre.ethers.getContractFactory("Red");
@@ -67,7 +66,6 @@ async function main() {
   );
   contracts.push({name: "GameLogic", contract: gameLogic});
 
-
   redContract.transferOwnership(gameLogic.address);
   blueContract.transferOwnership(gameLogic.address);
   yellowContract.transferOwnership(gameLogic.address);
@@ -82,7 +80,7 @@ async function main() {
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
-function saveFrontendFiles(contracts) {
+function saveFrontendFiles(contracts: any) {
   const fs = require("fs");
   const contractsDir = __dirname + "/../frontend/src/contracts";
 
@@ -92,7 +90,7 @@ function saveFrontendFiles(contracts) {
 
   let jsonAddress = {};
 
-  contracts.forEach(c => {
+  contracts.forEach((c:any) => {
 
     // Build each fronend contract artifact
     const ContractArtifact = artifacts.readArtifactSync(c.name);

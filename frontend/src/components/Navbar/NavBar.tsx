@@ -102,9 +102,9 @@ const NavBar: React.FC<INavBarProps> = ({}) => {
 
       <nav className={styles.navbar}>
 
-        <div className={"bg-white px-6 py-4"}>
+        <div className={" px-6 py-4"}>
           {/* LINE */}
-          <h1 className={"tracking-wider text-4xl"}>COMPLEXION</h1>
+          <h1 className={"tracking-wider text-2xl"}>COMPLEXION</h1>
         </div>
 
         <div className={styles.accountElement}>

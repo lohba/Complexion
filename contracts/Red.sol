@@ -14,7 +14,6 @@ contract Red is Ownable, ERC721Enumerable {
     string redTokenURI = "https://gateway.pinata.cloud/ipfs/QmNeiZxZTZHkUuAH1EUZtgDXZcfXr9PoNk1WFYXdmCNYrx/Red.json";
 
     constructor() ERC721("Complexion", "COMPLEX") {
-
     }
 
     using Strings for uint256;
@@ -37,10 +36,9 @@ contract Red is Ownable, ERC721Enumerable {
         _safeMint(_minter, tokenId);
     }
 
-    function burn(uint256 tokenId) public virtual override{
+    function burn(uint256 tokenId) public virtual {
         require(msg.sender == ownerOf(tokenId), "You are not the owner");
         _burn(tokenId);
     }
-
 }
 

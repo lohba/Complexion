@@ -40,6 +40,7 @@ contract GameLogic is PullPayment, ReentrancyGuard{
     address public sidePotPool;
     uint256 public resetTime;
     uint256 public votersInRound;
+    bool public winningStatus;
 
     mapping(uint256 => NFT) public colorToNFT;
     //mapping(uint256 => bool) public winnerRound;
@@ -150,9 +151,10 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         // _asyncTransfer(sidePotPool, msg.value * 9 / 100);
         currentRoundPool += msg.value;
         // if the 10th NFT is minted there is a winning color
-        if(currentNFT.oldSupply == 3) {
+        if(currentNFT.oldSupply == 10) {
             winningRound = roundNumber;
             winningColor = currentNFT.color;
+            winningStatus = true;
         }
 
         // update voted to true
@@ -231,7 +233,7 @@ contract GameLogic is PullPayment, ReentrancyGuard{
 
     function reset() external {
             require(block.timestamp > resetTime, "Not yet ready");
-
+            require(winningStatus == true, "Round is not finished");
             // WinnerRound[roundNumber] = (
 
             // );
@@ -246,6 +248,8 @@ contract GameLogic is PullPayment, ReentrancyGuard{
             yellow.mintPrice = 0.1 ether;
             green.oldSupply = 0;
             green.mintPrice = 0.1 ether;
+
+            winningStatus = false;
         }
 }
 

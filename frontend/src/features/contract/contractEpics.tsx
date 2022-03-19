@@ -19,13 +19,14 @@ export const loadColorsData_Epic: Epic<any, any, RootState, any> = (
       const yellowContract = state$.value.contractReducer.yellowContract;
       const greenContract = state$.value.contractReducer.greenContract;*/
       const gameLogic = state$.value.contractReducer.gameLogicContract;
+      console.log('EPIC: LOAD_CORE_DATA')
       return from(
         Promise.all([
 /*          redContract.totalSupply(),
           blueContract.totalSupply(),
           yellowContract.totalSupply(),
           greenContract.totalSupply(),*/
-          gameLogic.MAX_COLORS(),
+          // gameLogic.MAX_COLORS(),
         ])
       ).pipe(
         mergeMap((response: any): any => {

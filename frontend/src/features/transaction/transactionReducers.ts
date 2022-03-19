@@ -34,7 +34,7 @@ export const transactionReducer = (
 ) => {
   switch (action.type) {
     case TransactionTypes.SUBMIT_PAYABLE_TX:
-      console.log("reducer")
+      console.log("REDUCER SUBMIT_PAYABLE_TX =>", action)
       return {
         ...state,
         isOngoingTx: true,

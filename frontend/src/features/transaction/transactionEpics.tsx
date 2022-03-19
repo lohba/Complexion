@@ -1,5 +1,5 @@
 import {ofType, Epic} from 'redux-observable'
-import {catchError, switchMap, map, mergeMap} from 'rxjs/operators'
+import { catchError, switchMap, map, mergeMap, tap } from "rxjs/operators";
 import {RootState} from "../../store/indexReducers";
 import {from, of} from "rxjs";
 import {setTxError, setTxFailed, setTxSuccess, setTxTentative, TransactionTypes} from "./transactionActions";
@@ -10,9 +10,12 @@ export const submitTxPayable_Epic: Epic<any, any, RootState, any> = (
   action$,
   state$: any
 ) => {
+  console.log(action$)
   return action$.pipe(
     ofType(TransactionTypes.SUBMIT_PAYABLE_TX),
+    tap(val => console.log(`BEFORE MAP: ${val}`)),
     switchMap((action: any): any => {
+
       console.log("EPIC", action);
       const contract = state$.value.contractReducer.gameLogicContract;
       return from(accountService.doPayableTransaction(

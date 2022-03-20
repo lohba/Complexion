@@ -13,7 +13,7 @@ contract Blue is Ownable, ERC721Enumerable {
     string public _baseTokenURI;
     string blueTokenURI = "https://gateway.pinata.cloud/ipfs/QmNeiZxZTZHkUuAH1EUZtgDXZcfXr9PoNk1WFYXdmCNYrx/Blue.json";
 
-    constructor() ERC721("Complexion", "COMPLEX") {
+    constructor() ERC721("Complexion", "X-BLUE") {
     }
 
     using Strings for uint256;

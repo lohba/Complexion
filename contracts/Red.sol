@@ -13,7 +13,7 @@ contract Red is Ownable, ERC721Enumerable {
     string public _baseTokenURI;
     string redTokenURI = "https://gateway.pinata.cloud/ipfs/QmNeiZxZTZHkUuAH1EUZtgDXZcfXr9PoNk1WFYXdmCNYrx/Red.json";
 
-    constructor() ERC721("Complexion", "COMPLEX") {
+    constructor() ERC721("Complexion", "X-RED") {
     }
 
     using Strings for uint256;

@@ -219,7 +219,7 @@ contract GameLogic is PullPayment, ReentrancyGuard{
     function mintWinner() external payable nonReentrant {
         require(roundToVoter[msg.sender][winningRound].voted == true, "have to vote");
         require(roundToVoter[msg.sender][winningRound].color == winningColor, "have to be winning color");
-        require(roundToVoter[msg.sender][winningRound].claimedReward == false, "Already claimed reward for this round");
+//        require(roundToVoter[msg.sender][winningRound].claimedReward == false, "Already claimed reward for this round");
         require(roundToVoter[msg.sender][winningRound].minted == false, "Already minted this round");
 
         roundToVoter[msg.sender][winningRound].color == 1 ? redContract.mintWinner(msg.sender)

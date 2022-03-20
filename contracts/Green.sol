@@ -13,7 +13,7 @@ contract Green is Ownable, ERC721Enumerable {
     string public _baseTokenURI;
     string greenTokenURI = "https://gateway.pinata.cloud/ipfs/QmNeiZxZTZHkUuAH1EUZtgDXZcfXr9PoNk1WFYXdmCNYrx/Green.json";
 
-    constructor() ERC721("Complexion", "COMPLEX") {
+    constructor() ERC721("Complexion", "X-GREEN") {
     }
 
     using Strings for uint256;

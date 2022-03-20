@@ -13,7 +13,7 @@ contract Yellow is Ownable, ERC721Enumerable {
     string public _baseTokenURI;
     string yellowTokenURI = "https://gateway.pinata.cloud/ipfs/QmNeiZxZTZHkUuAH1EUZtgDXZcfXr9PoNk1WFYXdmCNYrx/Yellow.json";
 
-    constructor() ERC721("Complexion", "COMPLEX") {
+    constructor() ERC721("Complexion", "X-YELLOW") {
     }
 
     using Strings for uint256;
@@ -31,7 +31,7 @@ contract Yellow is Ownable, ERC721Enumerable {
         return yellowTokenURI;
     }
 
-    function mintWinner(address _minter) external onlyOwner{
+    function mintWinner(address _minter) external onlyOwner {
         uint tokenId = totalSupply();
         _safeMint(_minter, tokenId);
     }

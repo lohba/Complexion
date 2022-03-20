@@ -119,17 +119,38 @@ contract GameLogic is PullPayment, ReentrancyGuard{
     // green = 3
     // yellow = 4
 
-/*    function votingPrice(uint256 supply, uint256 currentPrice) external returns (uint256) {
-        return currentPrice**supply;
-    }*/
+    function votingPrice(uint256 _color) public returns (uint256) {
+        uint supply = colorToNFT[_color].oldSupply;
+        uint256 price = 0;
+        if (supply >= 1) {
+            price = 0.12 ether;
+        } else if (supply >= 2) {
+            price = 0.15 ether;
+        } else if (supply >= 3) {
+            price = 0.18 ether;
+        } else if (supply >= 4) {
+            price = 0.22 ether;
+        } else if (supply >= 5) {
+            price = 0.25 ether;
+        } else if (supply >= 6) {
+            price = 0.3 ether;
+        } else if (supply >= 7) {
+            price = 0.38 ether;
+        } else if (supply >= 8) {
+            price = 0.45 ether;
+        } else if (supply >= 9) {
+            price = 0.6 ether;
+        }
+        return price;
+    }
 
     function voteForColor(uint256 _color) public payable {
         NFT storage currentNFT = colorToNFT[_color];
 
         // require timechecking based on reset time;
         // get price
-        uint256 price = currentNFT.oldSupply > 0 ? currentNFT.mintPrice + (currentNFT.mintPrice / 5) : currentNFT.mintPrice;
-        uint256 nextPrice = currentNFT.oldSupply + 1 > 0 ? price + (price / 5) : price;
+        uint256 price = votingPrice(currentNFT.color);
+//        uint256 nextPrice = currentNFT.oldSupply + 1 > 0 ? price + (price / 5) : price;
         // check value being sent for vote
         require(msg.value == price, "Insufficient amount");
         require(_color >= 1 && _color <= 4, "wrong color");
@@ -140,7 +161,6 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         currentNFT.color = _color;
         // asign color to voter
         roundToVoter[msg.sender][roundNumber].color = _color;
-
 
         // assign price to mintPrice in struct
         currentNFT.mintPrice = price;

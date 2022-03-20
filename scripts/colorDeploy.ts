@@ -82,7 +82,7 @@ async function main() {
 // and properly handle errors.
 function saveFrontendFiles(contracts: any) {
   const fs = require("fs");
-  const contractsDir = __dirname + "/../frontend/src/contracts";
+  const contractsDir = __dirname + "/../../frontend/src/contracts";
 
   if (!fs.existsSync(contractsDir)) {
     fs.mkdirSync(contractsDir);

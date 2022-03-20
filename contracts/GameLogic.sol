@@ -129,7 +129,7 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         // require timechecking based on reset time;
         // get price
         uint256 price = currentNFT.oldSupply > 0 ? currentNFT.mintPrice + (currentNFT.mintPrice / 5) : currentNFT.mintPrice;
-
+        uint256 nextPrice = currentNFT.oldSupply + 1 > 0 ? price + (price / 5) : price;
         // check value being sent for vote
         require(msg.value == price, "Insufficient amount");
         require(_color >= 1 && _color <= 4, "wrong color");
@@ -143,12 +143,12 @@ contract GameLogic is PullPayment, ReentrancyGuard{
 
 
         // assign price to mintPrice in struct
-        currentNFT.mintPrice == price;
+        currentNFT.mintPrice = price;
         roundToVoter[msg.sender][roundNumber].mintPrice = price;
 
         console.log("Price is ", price);
         console.log("Supply is ", currentNFT.oldSupply);
-        console.log("Supply round number is ", roundNumber);
+        console.log("Round number is ", roundNumber);
 
         // Calcualte distribution and send ETH to currentPool and sidePoool using PullPayment
 

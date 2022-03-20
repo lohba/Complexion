@@ -74,7 +74,6 @@ async function main() {
   await gameLogic.deployed();
   console.log("GameLogic deployed to:", gameLogic.address);
 
-
   saveFrontendFiles(contracts);
 }
 
@@ -83,6 +82,7 @@ async function main() {
 function saveFrontendFiles(contracts: any) {
   const fs = require("fs");
   const contractsDir = __dirname + "/../../frontend/src/contracts";
+  console.log(contractsDir);
 
   if (!fs.existsSync(contractsDir)) {
     fs.mkdirSync(contractsDir);

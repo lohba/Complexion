@@ -119,27 +119,27 @@ contract GameLogic is PullPayment, ReentrancyGuard{
     // green = 3
     // yellow = 4
 
-    function votingPrice(uint256 _color) public returns (uint256) {
-        uint supply = colorToNFT[_color].oldSupply;
-        uint256 price = 0;
-        if (supply >= 1) {
-            price = 0.12 ether;
-        } else if (supply >= 2) {
-            price = 0.15 ether;
-        } else if (supply >= 3) {
-            price = 0.18 ether;
-        } else if (supply >= 4) {
-            price = 0.22 ether;
-        } else if (supply >= 5) {
-            price = 0.25 ether;
-        } else if (supply >= 6) {
-            price = 0.3 ether;
-        } else if (supply >= 7) {
-            price = 0.38 ether;
+    function votingPrice(uint256 _color) public view returns (uint256) {
+        uint256 supply = colorToNFT[_color].oldSupply;
+        uint256 price = 0.1 ether;
+        if (supply >= 9) {
+            price = 0.6 ether;
         } else if (supply >= 8) {
             price = 0.45 ether;
-        } else if (supply >= 9) {
-            price = 0.6 ether;
+        } else if (supply >= 7) {
+            price = 0.38 ether;
+        } else if (supply >= 6) {
+            price = 0.3 ether;
+        } else if (supply >= 5) {
+            price = 0.25 ether;
+        } else if (supply >= 4) {
+            price = 0.22 ether;
+        } else if (supply >= 3) {
+            price = 0.18 ether;
+        } else if (supply >= 2) {
+            price = 0.15 ether;
+        } else if (supply >= 1) {
+            price = 0.12 ether;
         }
         return price;
     }
@@ -154,6 +154,7 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         // check value being sent for vote
         require(msg.value == price, "Insufficient amount");
         require(_color >= 1 && _color <= 4, "wrong color");
+        require(currentNFT.oldSupply < 10, "Round ended");
 //        require(roundToVoter[msg.sender][roundNumber].voted == false, "Already voted this round"); // check player hasn't voted this round);
         // update NFT supply
         currentNFT.oldSupply += 1;
@@ -177,7 +178,7 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         // _asyncTransfer(sidePotPool, msg.value * 9 / 100);
         currentRoundPool += msg.value;
         // if the 10th NFT is minted there is a winning color
-        if(currentNFT.oldSupply == 10) {
+        if (currentNFT.oldSupply == 10) {
             winningRound = roundNumber;
             winningColor = currentNFT.color;
             winningStatus = true;
@@ -213,6 +214,7 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         console.log("balance after redeemAll", msg.sender.balance);
         roundToVoter[msg.sender][winningRound].claimedReward = true;
     }
+
 
     function mintWinner() external payable nonReentrant {
         require(roundToVoter[msg.sender][winningRound].voted == true, "have to vote");

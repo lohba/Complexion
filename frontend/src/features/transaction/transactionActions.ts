@@ -117,7 +117,7 @@ export const setTxSuccess = (
 ): IsetTxSuccess => {
   console.log("SET_TX_SUCCESS ACTION", txReceipt);
   // TODO: remove in production
-  // window.location.reload();
+  window.location.reload();
   return {
     type: TransactionTypes.SET_TX_SUCCESS,
     txReceipt

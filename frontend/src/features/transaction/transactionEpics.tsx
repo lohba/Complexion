@@ -4,7 +4,8 @@ import {RootState} from "../../store/indexReducers";
 import {from, of} from "rxjs";
 import {setTxError, setTxFailed, setTxSuccess, setTxTentative, TransactionTypes} from "./transactionActions";
 import accountService from "../../services/accountService";
-import {loadCoreData} from "../contract/contractActions";
+import { loadCoreData, setContractProvider } from "../contract/contractActions";
+import { dispatch } from "../../store/store";
 
 export const submitTxPayable_Epic: Epic<any, any, RootState, any> = (
   action$,
@@ -68,6 +69,7 @@ export const manageOngoingTx_Epic: Epic<any, any, RootState, any> = (
     ofType(TransactionTypes.SET_TX_TENTATIVE),
     switchMap((action: any): any => {
       const tx = state$.value.transactionReducer.txBeingSent;
+      const gameLogic = state$.value.contractReducer.gameLogicContract;
       return from(tx.wait())
         .pipe(
           mergeMap((receipt: any): any => {
@@ -77,8 +79,8 @@ export const manageOngoingTx_Epic: Epic<any, any, RootState, any> = (
               } else {
                 return of(
                   setTxSuccess(receipt),
-                  loadCoreData()
-                )
+                  // setContractProvider(gameLogic, 'gameLogicContract'),
+              )
               }
             }
           ),

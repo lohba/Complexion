@@ -5,6 +5,8 @@
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
 const fs = require("fs");
+const path = require('path');
+
 
 import {artifacts, network} from "hardhat";
 
@@ -28,7 +30,7 @@ async function main() {
 
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
-  // Red
+  //Red
   const RedContract = await hre.ethers.getContractFactory("Red");
   const redContract = await RedContract.deploy();
   await redContract.deployed();
@@ -63,6 +65,13 @@ async function main() {
     blueContract.address,
     yellowContract.address,
     greenContract.address
+    // "0x5C9db5429e02B9b428F0FeA9765db4A89391E9c5",
+    // "0xe3dbF34BE6C4e1629C43c2aeb635388e807d1955",
+    // "0xA49cDB31500b91CbeeE2c82Ad146C8295b0C769B",
+    // "0x2492d03E50Fd2135C31a93160c377A6AC20FfB9C",
+
+
+
   );
   contracts.push({name: "GameLogic", contract: gameLogic});
 
@@ -81,7 +90,8 @@ async function main() {
 // and properly handle errors.
 function saveFrontendFiles(contracts: any) {
   const fs = require("fs");
-  const contractsDir = __dirname + "/../../frontend/src/contracts";
+  //const contractsDir = __dirname + "/../../frontend/src/contracts";
+  const contractsDir = path.join(__dirname, "../complexion-face/src/contracts");
   console.log(contractsDir);
 
   if (!fs.existsSync(contractsDir)) {

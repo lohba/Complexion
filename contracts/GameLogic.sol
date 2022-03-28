@@ -254,10 +254,6 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         specialNFTContract.mintWinner(msg.sender);
 }
 
-// let the user pass the tokenIDs in a deterministic order. So an array of 4 values wherein the first value corresponds to red color, second to blue, third to green, foruth to yellow.
-// iterate over the 4 tokenIDs, and call the ownerOf method of respsective color contracts and require that the owner is msg.sender. If it's not the contract would revert and execution stops
-// Iterate over the 4 tokenIds again and burn them
-// Mint special NFT
 
     function reset() external {
             require(block.timestamp > resetTime, "Not yet ready");

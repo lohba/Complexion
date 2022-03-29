@@ -1,13 +1,18 @@
-# Simple hardhat react daap(javascript)
+# Complexion
+
+
+Complexion is a Gaming Dapp that combines the concept of Defi and NFTs and provides players with interesting game theory. There are four teams that are racing and competing against each other (Red, Blue, Green Yellow). The team’s score increases every time somebody votes. One wallet can only vote once for a single color per round. The first team that gets 10 points wins the round. Price to vote is on a bonding curve with the first NFT priced at 0.1 ETH and the last at 0.6 ETH. When you win, what exactly do you get as a prize? The first option is to claim the reward which is derived from all of the ETH spent to vote on the non-winning colors by other players. The ETH spent to vote from the losing team will be divided up by anyone on the winning team who decides to claim the reward. If a winner forgoes the reward, the player has the option to mint the NFT of the winning color and keep it as a trophy. Utility for the NFT will be added in the next iteration. 
+
 ## Development setup
 
-1. Clone this repo
-2. `cd cloned-folder` && `npm install`
-3. `cd frontend` && `npm install`
-4. add variables to `.env` as in `.env.example`
-5. `npm run node`
-6. `npm run deploy:local` || `npm run deploy:rinkeby`
-7. `npm run frontend`
+This project is split into two repos, the smart contract and the frontend. To deploy this locally: 
+
+1. run `git clone -b frontend+backend https://github.com/lohba/Complexion.git` 
+2. `cd cloned-folder` and clone the frontend repo by running `git clone -b frontend+backend https://github.com/meta-sergio/complexion-face.git`
+3. `npm install`
+4. run `npx hardhat node` and then `npx hardhat run scripts/colorDeploy.ts --network localhost`
+5. `cd complexion-face` and run `npx yarn start` 
+6. If you get an error, run `yarn install` and re-run command 5.
 
 # Advanced Sample Hardhat Project
 

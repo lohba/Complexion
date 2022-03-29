@@ -104,35 +104,23 @@ describe("GameLogic", function () {
 		await expect (cGameLogic.connect(accounts[0]).reset()).to.be.revertedWith("Not yet ready");
 	});
 
-// 	it("should check if reawards are distributed correctly", async function() {
-// 		const accounts = await ethers.getSigners();
-// 		provider = ethers.provider;
-// 		const prices = [0.12, 0.15, 0.18, 0.22, 0.25, 0.3, 0.38, 0.45, 0.6]; // sums to 2.65E + 0.1E = 2.75E
-// 		// Vote for Blue 9 Times (Losing Team) 
-// 		await expect(cGameLogic.connect(accounts[0]).voteForColor(2, { value: ethers.utils.parseEther("0.1") })).to.emit(cGameLogic, "Voted").withArgs(accounts[0].address, ethers.utils.parseEther("0.1"), 0, 2);
-// 		for (let i = 0; i < 8; i ++) {
-// 			var color = await cGameLogic.connect(accounts[i+1]).voteForColor(2, { value: ethers.utils.parseEther(prices[i].toString()) });
-// 		}
-// 		// Vote for Red 10 Times (Winning Team)
-// 		await expect(cGameLogic.connect(accounts[9]).voteForColor(1, { value: ethers.utils.parseEther("0.1") })).to.emit(cGameLogic, "Voted").withArgs(accounts[9].address, ethers.utils.parseEther("0.1"), 0, 1);
-// 		for (let j = 9; j < 18; j ++) {
-// 			var Redcolor = await cGameLogic.connect(accounts[j+1]).voteForColor(1, { value: ethers.utils.parseEther(prices[j-9].toString())});
-// 		}
-// 		// Check that the reward has been sent
-// 		cGameLogic.connect(accounts[12]).claimReward();
-
-// 		expect(await ethers.provider.getBalance(accounts[12].address)).to.be.equal(1000000);
-// 	});
+	it("Check if reawards are distributed correctly", async function() {
+		const accounts = await ethers.getSigners();
+		provider = ethers.provider;
+		const prices = [0.12, 0.15, 0.18, 0.22, 0.25, 0.3, 0.38, 0.45, 0.6]; // sums to 2.65E + 0.1E = 2.75E
+		// Vote for Blue 9 Times (Losing Team) 
+		await expect(cGameLogic.connect(accounts[0]).voteForColor(2, { value: ethers.utils.parseEther("0.1") })).to.emit(cGameLogic, "Voted").withArgs(accounts[0].address, ethers.utils.parseEther("0.1"), 0, 2);
+		for (let i = 0; i < 8; i ++) {
+			var color = await cGameLogic.connect(accounts[i+1]).voteForColor(2, { value: ethers.utils.parseEther(prices[i].toString()) });
+		}
+		// Vote for Red 10 Times (Winning Team)
+		await expect(cGameLogic.connect(accounts[9]).voteForColor(1, { value: ethers.utils.parseEther("0.1") })).to.emit(cGameLogic, "Voted").withArgs(accounts[9].address, ethers.utils.parseEther("0.1"), 0, 1);
+		for (let j = 9; j < 18; j ++) {
+			var Redcolor = await cGameLogic.connect(accounts[j+1]).voteForColor(1, { value: ethers.utils.parseEther(prices[j-9].toString())});
+		}
+		// Check that the reward has been sent to the first minter for Red
+		cGameLogic.connect(accounts[10]).claimReward();
+		expect(await ethers.provider.getBalance(accounts[10].address)).to.changeEtherBalance(accounts[10].address, 0.33);;
+	});
  })
 
-// accounts[8] = 9999.0996 ETH
-// accounts[9] =  9999.299 ETH
-// accounts[10] = 9999.8798 ETH
-// accounts[11] = 9999.849833 ETH
-// accounts[12] = 9999.819833 ETH
-
-// acounts = [0, 1, 2, 3, 4, 5, 6, 7, 8] 
-// prices = [0.12, 0.15, 0.18, 0.22, 0.25, 0.3, 0.38, 0.45, 0.6]
-
-// acounts = [9, 10, 11, 12, 13, 14, 15, 16, 17] 
-// prices = [0.12, 0.15, 0.18, 0.22, 0.25, 0.3, 0.38, 0.45, 0.6]

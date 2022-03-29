@@ -201,18 +201,18 @@ contract GameLogic is PullPayment, ReentrancyGuard{
     // Winners from the round can claim round reward or mint NFT
     function claimReward() external payable nonReentrant {
         require(roundToVoter[msg.sender][winningRound].voted == true, "have to vote");
-//        require(roundToVoter[msg.sender][winningRound].color == winningColor, "have to be winning color");
+        require(roundToVoter[msg.sender][winningRound].color == winningColor, "have to be winning color");
         require(roundToVoter[msg.sender][winningRound].claimedReward == false, "Already claimed reward for this round");
-//        require(roundToVoter[msg.sender][winningRound].minted == false, "Already minted this round");
+        require(roundToVoter[msg.sender][winningRound].minted == false, "Already minted this round");
         // calculation for prize pool per voter based on voters in round
-        console.log("currentRoundPool ", currentRoundPool);
-        console.log("votersInRound ", votersInRound);
-        console.log("amount ", (currentRoundPool - ((currentRoundPool / votersInRound) * 10))/10); 
+        // console.log("currentRoundPool ", currentRoundPool);
+        // console.log("votersInRound ", votersInRound);
+        // console.log("amount ", (currentRoundPool - ((currentRoundPool / votersInRound) * 10))/10); 
         // 4.9- (2.578947)
         _asyncTransfer(msg.sender, (currentRoundPool - ((currentRoundPool / votersInRound) * 10))/10);
 
         redeemAll();
-        console.log("balance after redeemAll", msg.sender.balance);
+        //console.log("balance after redeemAll", msg.sender.balance);
         roundToVoter[msg.sender][winningRound].claimedReward = true;
     }
 

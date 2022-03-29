@@ -12,6 +12,7 @@
     "@nomiclabs/hardhat-ethers": "^2.0.5",
     "@nomiclabs/hardhat-etherscan": "^2.1.8",
     "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "@types/mocha": "^9.1.0",
     "@types/node": "^16.11.1",
     "chai": "^4.3.6",
     "dotenv": "^10.0.0",
@@ -37,6 +38,9 @@
   "dependencies": {
     "@metamask/detect-provider": "^1.2.0",
     "@openzeppelin/contracts": "^4.5.0",
-    "path": "^0.12.7"
+    "merkle-patricia-tree": "^4.2.4",
+    "path": "^0.12.7",
+    "semaphore": "^1.1.0",
+    "underscore": "^1.13.2"
   }
 }

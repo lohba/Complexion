@@ -152,10 +152,10 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         uint256 price = votingPrice(currentNFT.color);
 //        uint256 nextPrice = currentNFT.oldSupply + 1 > 0 ? price + (price / 5) : price;
         // check value being sent for vote
-        require(msg.value == price, "Insufficient amount");
-        require(_color >= 1 && _color <= 4, "wrong color");
+        require(msg.value == price, "Incorrect amount");
+        require(_color >= 1 && _color <= 4, "Wrong color");
         require(currentNFT.oldSupply < 10, "Round ended");
-//        require(roundToVoter[msg.sender][roundNumber].voted == false, "Already voted this round"); // check player hasn't voted this round);
+        require(roundToVoter[msg.sender][roundNumber].voted == false, "Already voted this round"); // check player hasn't voted this round);
         // update NFT supply
         currentNFT.oldSupply += 1;
         // assign color
@@ -167,9 +167,9 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         currentNFT.mintPrice = price;
         roundToVoter[msg.sender][roundNumber].mintPrice = price;
 
-        console.log("Price is ", price);
-        console.log("Supply is ", currentNFT.oldSupply);
-        console.log("Round number is ", roundNumber);
+        // console.log("Price is ", price);
+        // console.log("Supply is ", currentNFT.oldSupply);
+        // console.log("Round number is ", roundNumber);
 
         // Calcualte distribution and send ETH to currentPool and sidePoool using PullPayment
 
@@ -207,7 +207,8 @@ contract GameLogic is PullPayment, ReentrancyGuard{
         // calculation for prize pool per voter based on voters in round
         console.log("currentRoundPool ", currentRoundPool);
         console.log("votersInRound ", votersInRound);
-        console.log("amount ", (currentRoundPool - ((currentRoundPool / votersInRound) * 10))/10);
+        console.log("amount ", (currentRoundPool - ((currentRoundPool / votersInRound) * 10))/10); 
+        // 4.9- (2.578947)
         _asyncTransfer(msg.sender, (currentRoundPool - ((currentRoundPool / votersInRound) * 10))/10);
 
         redeemAll();
@@ -219,14 +220,14 @@ contract GameLogic is PullPayment, ReentrancyGuard{
     function mintWinner() external payable nonReentrant {
         require(roundToVoter[msg.sender][winningRound].voted == true, "have to vote");
         require(roundToVoter[msg.sender][winningRound].color == winningColor, "have to be winning color");
-//        require(roundToVoter[msg.sender][winningRound].claimedReward == false, "Already claimed reward for this round");
+        require(roundToVoter[msg.sender][winningRound].claimedReward == false, "Already claimed reward for this round");
         require(roundToVoter[msg.sender][winningRound].minted == false, "Already minted this round");
 
         roundToVoter[msg.sender][winningRound].color == 1 ? redContract.mintWinner(msg.sender)
         : roundToVoter[msg.sender][winningRound].color == 2 ? blueContract.mintWinner(msg.sender)
         : roundToVoter[msg.sender][winningRound].color == 3 ? greenContract.mintWinner(msg.sender)
         : yellowContract.mintWinner(msg.sender);
-
+        
         // have to know the amount sent
         // have to calculate the pool prize
         roundToVoter[msg.sender][winningRound].minted = true;

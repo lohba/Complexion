@@ -31,7 +31,7 @@ contract Red is Ownable, ERC721Enumerable {
         return redTokenURI;
     }
 
-    function mintWinner(address _minter) external onlyOwner{
+    function mintWinner(address _minter) external onlyOwner {
         uint tokenId = totalSupply();
         _safeMint(_minter, tokenId);
     }

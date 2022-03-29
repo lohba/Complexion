@@ -57,6 +57,25 @@ describe("GameLogic", function () {
 		await expect(cGameLogic.voteForColor(1, { value: ethers.utils.parseEther("0.12")})).to.be.revertedWith("Already voted this round");
 	});
 
+	it("Check if reawards are distributed correctly", async function() {
+		const accounts = await ethers.getSigners();
+		provider = ethers.provider;
+		const prices = [0.12, 0.15, 0.18, 0.22, 0.25, 0.3, 0.38, 0.45, 0.6]; // sums to 2.65E + 0.1E = 2.75E
+		// Vote for Blue 9 Times (Losing Team) 
+		await expect(cGameLogic.connect(accounts[0]).voteForColor(2, { value: ethers.utils.parseEther("0.1") })).to.emit(cGameLogic, "Voted").withArgs(accounts[0].address, ethers.utils.parseEther("0.1"), 0, 2);
+		for (let i = 0; i < 8; i ++) {
+			var color = await cGameLogic.connect(accounts[i+1]).voteForColor(2, { value: ethers.utils.parseEther(prices[i].toString()) });
+		}
+		// Vote for Red 10 Times (Winning Team)
+		await expect(cGameLogic.connect(accounts[9]).voteForColor(1, { value: ethers.utils.parseEther("0.1") })).to.emit(cGameLogic, "Voted").withArgs(accounts[9].address, ethers.utils.parseEther("0.1"), 0, 1);
+		for (let j = 9; j < 18; j ++) {
+			var Redcolor = await cGameLogic.connect(accounts[j+1]).voteForColor(1, { value: ethers.utils.parseEther(prices[j-9].toString())});
+		}
+		// Check that the reward has been sent to the first minter for Red
+		cGameLogic.connect(accounts[10]).claimReward();
+		expect(await ethers.provider.getBalance(accounts[10].address)).to.changeEtherBalance(accounts[10].address, 0.33210);;
+	});
+
 	it("Check that only a voter of the winning color can mint an NFT", async function() {
 		const accounts = await ethers.getSigners();
 		provider = ethers.provider;
@@ -104,23 +123,6 @@ describe("GameLogic", function () {
 		await expect (cGameLogic.connect(accounts[0]).reset()).to.be.revertedWith("Not yet ready");
 	});
 
-	it("Check if reawards are distributed correctly", async function() {
-		const accounts = await ethers.getSigners();
-		provider = ethers.provider;
-		const prices = [0.12, 0.15, 0.18, 0.22, 0.25, 0.3, 0.38, 0.45, 0.6]; // sums to 2.65E + 0.1E = 2.75E
-		// Vote for Blue 9 Times (Losing Team) 
-		await expect(cGameLogic.connect(accounts[0]).voteForColor(2, { value: ethers.utils.parseEther("0.1") })).to.emit(cGameLogic, "Voted").withArgs(accounts[0].address, ethers.utils.parseEther("0.1"), 0, 2);
-		for (let i = 0; i < 8; i ++) {
-			var color = await cGameLogic.connect(accounts[i+1]).voteForColor(2, { value: ethers.utils.parseEther(prices[i].toString()) });
-		}
-		// Vote for Red 10 Times (Winning Team)
-		await expect(cGameLogic.connect(accounts[9]).voteForColor(1, { value: ethers.utils.parseEther("0.1") })).to.emit(cGameLogic, "Voted").withArgs(accounts[9].address, ethers.utils.parseEther("0.1"), 0, 1);
-		for (let j = 9; j < 18; j ++) {
-			var Redcolor = await cGameLogic.connect(accounts[j+1]).voteForColor(1, { value: ethers.utils.parseEther(prices[j-9].toString())});
-		}
-		// Check that the reward has been sent to the first minter for Red
-		cGameLogic.connect(accounts[10]).claimReward();
-		expect(await ethers.provider.getBalance(accounts[10].address)).to.changeEtherBalance(accounts[10].address, 0.33);;
-	});
+
  })
 

@@ -57,7 +57,7 @@ describe("GameLogic", function () {
 		await expect(cGameLogic.voteForColor(1, { value: ethers.utils.parseEther("0.12")})).to.be.revertedWith("Already voted this round");
 	});
 
-	it("Check that only a winner can mint an NFT", async function() {
+	it("Check that only a voter of the winning color can mint an NFT", async function() {
 		const accounts = await ethers.getSigners();
 		provider = ethers.provider;
 		// Vote for Blue 10 Times
@@ -66,6 +66,7 @@ describe("GameLogic", function () {
 			var color = await cGameLogic.connect(accounts[i+1]).voteForColor(2, { value: ethers.utils.parseEther(prices[i].toString())});
 		}
 		await cGameLogic.connect(accounts[0]).mintWinner();
+		await expect (cGameLogic.connect(accounts[10]).mintWinner()).to.be.revertedWith("have to vote");
 	});
 
 	it("Check that only a winner can claim a reward ", async function() {
@@ -77,6 +78,7 @@ describe("GameLogic", function () {
 			var color = await cGameLogic.connect(accounts[i+1]).voteForColor(2, { value: ethers.utils.parseEther(prices[i].toString())});
 		}
 		await cGameLogic.connect(accounts[0]).claimReward();
+		await expect (cGameLogic.connect(accounts[10]).claimReward()).to.be.revertedWith("have to vote");
 	});
 
 	it("Check that a winner cannot claim and reward AND mint an NFT ", async function() {
